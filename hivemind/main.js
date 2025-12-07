@@ -613,6 +613,7 @@ function changeSlot(type, category) {
             hive.level[i] = level+0;
         } else if (category === 'flip') {
             let cur = hive.slots[i];
+            if (hive.slots[i] == 'U') continue;
             hive.slots[i] = (cur === cur.toUpperCase()) ? cur.toLowerCase() : cur.toUpperCase();
         } else if (category === 'removequip') {
             hive.beequip[i] = null;
