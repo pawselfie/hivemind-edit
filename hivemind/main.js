@@ -189,7 +189,7 @@ function setup() {
         if (['bees-common', 'bees-rare', 'bees-epic', 'bees-legend', 'bees-mythic', 'bees-event'].includes(parentId)) {
             bee_btns.push(wrappedBtn);
         } 
-        else if (['bees-beequip', 'bees-beesmas'].includes(parentId)) {
+        else if (['bees-beequip', 'bees-beesmas', 'bees-unreleased'].includes(parentId)) {
             bqp_btns.push(wrappedBtn);
         } 
         else if (parentId === 'bees-mutation') {
@@ -270,6 +270,9 @@ function setup() {
 
     select('#beesmasMax').mouseClicked(expandPanel.bind(null, 'beesmas'));
     select('#beesmasMin').mouseClicked(expandPanel.bind(null, 'beesmas', 'true'));
+
+    select('#unreleasedMax').mouseClicked(expandPanel.bind(null, 'unreleased'));
+    select('#unreleasedMin').mouseClicked(expandPanel.bind(null, 'unreleased', 'true'));
 
     select('#btn-U').mouseClicked(changeSlot.bind(null, 'U', 'bee'));
     select('#btn-LVL').mouseClicked(changeSlot.bind(null, 0, 'level'));
