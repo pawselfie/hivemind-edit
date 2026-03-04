@@ -9,12 +9,12 @@
 }
 
 html {
-    background: #050722;
+    background: linear-gradient(135deg, #0C1626, #050722) fixed;
     height: 100vh;
 }
 
 body {
-    background: linear-gradient(135deg, #0C1626, #050722);
+    background: transparent;
     color: var(--text);
     max-width: 1300px;
     max-height: 95%;
