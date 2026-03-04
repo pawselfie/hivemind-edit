@@ -1,6 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
-    <body>
-        <a href="/hivemind" class="button">Hivemind</a>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, height=device-height,  initial-scale=1.0, user-scalable=no;user-scalable=0;"/>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="hivemind">
+    <meta property="og:title" content="hivemind">
+    <meta property="og:description" content="create and share hives for bee swarm simulator!">
+    <meta property="og:image" content="https://t4styl.github.io/hivemind/assets/favicon_svg.svg">
+    <title>Hivemind</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/favicon_svg.svg">
+</head>
+<body>
+    <header>
+        <img src="assets/favicon_svg.svg" id="hivemind_icon"/>
+        <p id="headerTitle">Hivemind</p>
+        <div id="darkToggle">
+            <button id="darkMode" data-status="active">
+                <span class="material-symbols-outlined button_dark">dark_mode</span>
+            </button>
+            <button id="lightMode" data-status="inactive">
+                <span class="material-symbols-outlined button_light">light_mode</span>
+            </button>
+        </div>
+    </header>
+    <div id="menu" data-status="active">
+        <div class="canvasContainer"></div>
+        <div class="toolPanel">
+            <button id="appButton-1" class="appButton">Start a new hive</button>
+            <button id="appButton-2" class="appButton" data-status="inactive">Continue working on saved hive</button>
+            <button id="appButton-3" class="appButton">Import hive code</button>
+        </div>
+    </div>
+    <div id="app" data-status="inactive">
+        <div class="canvasContainer"></div>
+        <div class="beePanel">
+            <div id="multSeltCon"></div>
+            <div id="general">
+                <div class="beeHead">
+                    <p class="beeTitle">General</p>
+                    <button id="generalMax" class="minMax" data-status="inactive">
+                        <span class="material-symbols-outlined">
+                        add
+                        </span>
+                    </button>
+                    <button id="generalMin" class="minMax" data-status="active">
+                        <span class="material-symbols-outlined">
+                        remove
+                        </span>
+                    </button>
+                </div>
+                <div id="bees-general" class="bee-section" data-status="active">
+                    <button id="btn-U">Empty slot</button>
+                    <button id="btn-LVL">Set Level</button>
+                    <button id="btn-FLIP">Flip Gifted Value</button>
+                    <button id="removeBeequip">Remove Beequip</button>
+                </div>
+            </div>
+            <div id="commonBees">
+                <div class="beeHead">
+                    <p class="beeTitle">Common Bees</p>
+                    <button id="commonMax" class="minMax" data-status="inactive">
+                        <span class="material-symbols-outlined">
+                        add
+                        </span>
+                    </button>
+                    <button id="commonMin" class="minMax" data-status="active">
+                        <span class="material-symbols-outlined">
+                        remove
+                        </span>
+                    </button>
+                </div>
+                <div id="bees-common" class="bee-section" data-status="active">
+                    <button id="btn-BA">Basic Bee</button>
+                </div>
+            </div>
+            <div id="rareBees">
+                <div class="beeHead">
+                    <p class="beeTitle">Rare Bees</p>
+                    <button id="rareMax" class="minMax" data-status="inactive">
+                        <span class="material-symbols-outlined">
+                        add
+                        </span>
+                    </button>
+                    <button id="rareMin" class="minMax" data-status="active">
+                        <span class="material-symbols-outlined">
+                        remove
+                        </span>
+                    </button>
+                </div>
+                <div id="bees-rare" class="bee-section" data-status="active">
+                    <button id="btn-BO">Bomber Bee</button>
+                    <button id="btn-BR">Brave Bee</button>
+                    <button id="btn-BU">Bumble Bee</button>
+                    <button id="btn-CO">Cool Bee</button>
+                    <button id="btn-HA">Hasty Bee</button>
+                    <button id="btn-LO">Looker Bee</button>
+                    <button id="btn-RA">Rad Bee</button>
+                    <button id="btn-RAS">Rascal Bee</button>
+                    <button id="btn-ST">Stubborn Bee</button>
+                </div>
+            </div>
+            <div id="epicBees">
+                <div class="beeHead">
+                    <p class="beeTitle">Epic Bees</p>
+                    <button id="epicMax" class="minMax" data-status="inactive">
+                        <span class="material-symbols-outlined">
+                        add
+                        </span>
+                    </button>
+                    <button id="epicMin" class="minMax" data-status="active">
+                        <span class="material-symbols-outlined">
+                        remove
+                        </span>
+                    </button>
+                </div>
+                <div id="bees-epic" class="bee-section" data-status="active">
+                    <button id="btn-BUB">Bubble Bee</button>
+                    <button id="btn-BUC">Bucko Bee</button>
+                    <button id="btn-COM">Commander Bee</button>
+                    <button id="btn-DE">Demo Bee</button>
+                    <button id="btn-EX">Exhausted Bee</button>
+                    <button id="btn-FI">Fire Bee</button>
+                    <button id="btn-FR">Frosty Bee</button>
+                    <button id="btn-HO">Honey Bee</button>
+                    <button id="btn-RAG">Rage Bee</button>
+                    <button id="btn-RI">Riley Bee</button>
+                    <button id="btn-SH">Shocked Bee</button>
+                </div>
+            </div>
+            <div id="legendBees">
+                <div class="beeHead">
+                    <p class="beeTitle">Legendary Bees</p>
+                    <button id="legendMax" class="minMax" data-status="inactive">
+                        <span class="material-symbols-outlined">
+                        add
+                        </span>
+                    </button>
+                    <button id="legendMin" class="minMax" data-status="active">
+                        <span class="material-symbols-outlined">
+                        remove
+                        </span>
+                    </button>
+                </div>
+                <div id="bees-legend" class="bee-section" data-status="active">
+                    <button id="btn-BAB">Baby Bee</button>
+                    <button id="btn-CA">Carpenter Bee</button>
+                    <button id="btn-DEM">Demon Bee</button>
+                    <button id="btn-DI">Diamond Bee</button>
+                    <button id="btn-LI">Lion Bee</button>
+                    <button id="btn-MU">Music Bee</button>
+                    <button id="btn-NI">Ninja Bee</button>
+                    <button id="btn-SHY">Shy Bee</button>
+                </div>
+            </div>
+            <div id="mythicBees">
+                <div class="beeHead">
+                    <p class="beeTitle">Mythic Bees</p>
+                    <button id="mythicMax" class="minMax" data-status="inactive">
+                        <span class="material-symbols-outlined">
+                        add
+                        </span>
+                    </button>
+                    <button id="mythicMin" class="minMax" data-status="active">
+                        <span class="material-symbols-outlined">
+                        remove
+                        </span>
+                    </button>
+                </div>
+                <div id="bees-mythic" class="bee-section" data-status="active">
+                    <button id="btn-BUO">Buoyant Bee</button>
+                    <button id="btn-FU">Fuzzy Bee</button>
+                    <button id="btn-PR">Precise Bee</button>
+                    <button id="btn-SP">Spicy Bee</button>
+                    <button id="btn-TA">Tadpole Bee</button>
+                    <button id="btn-VE">Vector Bee</button>
+                </div>
+            </div>
+            <div id="eventBees">
+                <div class="beeHead">
+                    <p class="beeTitle">Event Bees</p>
+                    <button id="eventMax" class="minMax" data-status="inactive">
+                        <span class="material-symbols-outlined">
+                        add
+                        </span>
+                    </button>
+                    <button id="eventMin" class="minMax" data-status="active">
+                        <span class="material-symbols-outlined">
+                        remove
+                        </span>
+                    </button>
+                </div>
+                <div id="bees-event" class="bee-section" data-status="active">
+                    <button id="btn-BE">Bear Bee</button>
+                    <button id="btn-COB">Cobalt Bee</button>
+                    <button id="btn-CR">Crimson Bee</button>
+                    <button id="btn-FE">Festive Bee</button>
+                    <button id="btn-GU">Gummy Bee</button>
+                    <button id="btn-PH">Photon Bee</button>
+                    <button id="btn-PU">Puppy Bee</button>
+                    <button id="btn-TAB">Tabby Bee</button>
+                    <button id="btn-VI">Vicious Bee</button>
+                    <button id="btn-WI">Windy Bee</button>
+                    <button id="btn-DIG">Digital Bee</button>
+                </div>
+            </div>
+            <div id="mutations">
+                <div class="beeHead">
+                    <p class="beeTitle">Mutations</p>
+                    <button id="mutationMax" class="minMax" data-status="inactive">
+                        <span class="material-symbols-outlined">
+                        add
+                        </span>
+                    </button>
+                    <button id="mutationMin" class="minMax" data-status="active">
+                        <span class="material-symbols-outlined">
+                        remove
+                        </span>
+                    </button>
+                </div>
+                <div id="bees-mutation" class="bee-section" data-status="active">
+                    <button id="btn-AT">Attack</button>
+                    <button id="btn-CAM">Convert Amount</button>
+                    <button id="btn-GA">Gather Amount</button>
+                    <button id="btn-EN">Energy</button>
+                    <button id="btn-BAR">Bee Ability Rate</button>
+                    <button id="btn-CC">Critical Chance</button>
+                    <button id="btn-BMS">Movement Speed</button>
+                    <button id="btn-IC">Instant Conversion</button>
+                </div>
+            </div>
+            <div id="beequips">
+                <div class="beeHead">
+                    <p class="beeTitle">Beequips - Normal</p>
+                    <button id="beequipMax" class="minMax" data-status="inactive">
+                        <span class="material-symbols-outlined">
+                        add
+                        </span>
+                    </button>
+                    <button id="beequipMin" class="minMax" data-status="active">
+                        <span class="material-symbols-outlined">
+                        remove
+                        </span>
+                    </button>
+                </div>
+                <div id="bees-beequip" class="bee-section" data-status="active">
+                    <button id="btn-AU">Autumn Sunhat</button>
+                    <button id="btn-BANG">Bang Snap</button>
+                    <button id="btn-BEAD">Bead Lizard</button>
+                    <button id="btn-BER">Beret</button>
+                    <button id="btn-BAN">Bandage</button>
+                    <button id="btn-BOT">Bottle Cap</button>
+                    <button id="btn-CAMO">Camo Bandana</button>
+                    <button id="btn-CAMP">Camphor Lip Balm</button>
+                    <button id="btn-CAN">Candy Ring</button>
+                    <button id="btn-CH">Charm Bracelet</button>
+                    <button id="btn-DEMO">Demon Talisman</button>
+                    <button id="btn-KA">Kazoo</button>
+                    <button id="btn-LE">Lei</button>
+                    <button id="btn-PA">Paperclip</button>
+                    <button id="btn-PIN">Pink Eraser</button>
+                    <button id="btn-PI">Pink Shades</button>
+                    <button id="btn-RO">Rose Headband</button>
+                    <button id="btn-SM">Smiley Sticker</button>
+                    <button id="btn-SW">Sweatband</button>
+                    <button id="btn-TH">Thimble</button>
+                    <button id="btn-THU">Thumbtack</button>
+                    <button id="btn-WH">Whistle</button>
+                </div>
+            </div>
+            <div id="beesmas">
+                <div class="beeHead">
+                    <p class="beeTitle">Beequips - Beesmas</p>
+                    <button id="beesmasMax" class="minMax" data-status="inactive">
+                        <span class="material-symbols-outlined">
+                        add
+                        </span>
+                    </button>
+                    <button id="beesmasMin" class="minMax" data-status="active">
+                        <span class="material-symbols-outlined">
+                        remove
+                        </span>
+                    </button>
+                </div>
+                <div id="bees-beesmas" class="bee-section" data-status="active">
+                    <button id="btn-BEE">Beesmas Top</button>
+                    <button id="btn-BEES">Beesmas Tree Hat</button>
+                    <button id="btn-BUBB">Bubble Light</button>
+                    <button id="btn-EL">Elf Cap</button>
+                    <button id="btn-ELE">Electric Candle</button>
+                    <button id="btn-FES">Festive Wreath</button>
+                    <button id="btn-ICI">Icicles</button>
+                    <button id="btn-LU">Lump Of Coal</button>
+                    <button id="btn-PAP">Paper Angel</button>
+                    <button id="btn-PINE">Pinecone</button>
+                    <button id="btn-PO">Poinsettia</button>
+                    <button id="btn-RE">Reindeer Antlers</button>
+                    <button id="btn-SI">Single Mitten</button>
+                    <button id="btn-SN">Snow Tiara</button>
+                    <button id="btn-SNO">Snowglobe</button>
+                    <button id="btn-TO">Toy Horn</button>
+                    <button id="btn-TOY">Toy Drum</button>
+                    <button id="btn-WA">Warm Scarf</button>
+                    <button id="btn-PE">Peppermint Antennas</button>
+                </div>
+            </div>
+            <div id="unreleased">
+                <div class="beeHead">
+                    <p class="beeTitle">Beequips - Unreleased</p>
+                    <button id="unreleasedMax" class="minMax" data-status="inactive">
+                        <span class="material-symbols-outlined">
+                        add
+                        </span>
+                    </button>
+                    <button id="unreleasedMin" class="minMax" data-status="active">
+                        <span class="material-symbols-outlined">
+                        remove
+                        </span>
+                    </button>
+                </div>
+                <div id="bees-unreleased" class="bee-section" data-status="active">
+                    <button id="btn-SPS">Six-Point Shuriken</button>
+                    <button id="btn-PL">Pan Lid</button>
+                    <button id="btn-PB">Pink Bow</button>
+                    <button id="btn-OFF">Orange Flip Flop</button>
+                    <button id="btn-MFP">Monster Finger Puppet</button>
+                    <button id="btn-HH">Heroic Helm</button>
+                    <button id="btn-FGS">Fidget Spinner</button>
+                    <button id="btn-SC">Safety Cone</button>
+                    <button id="btn-CB">Charity Bracelet</button>
+                    <button id="btn-RS">Round Spectacles</button>
+                    <button id="btn-SH">Shell Necklace</button>
+                    <button id="btn-BKM">Beekeeper's Medal</button>
+                </div>
+            </div>
+            <br>
+        </div>
+        <div class="toolPanel">
+            <div class="left">
+                <button id="menuButton">Back to menu</button>
+            </div>
+            <div class="center">
+                <button id="addSlot">Add a slot</button>
+                <button id="removeSlot">Remove a slot</button>
+                <button id="changeName">Edit hive name</button>
+            </div>
+            <div class="right">
+                <button id="exportImg">Export as image</button>
+                <button id="exportTxt">Export as string</button>
+                <button id="saveHive">Save hive</button>
+                <p id="savedText" style="opacity: 0; display:inline">saved!</p>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+<script src="drawHive.js"></script>
+<script src="main.js"></script>
 </html>
