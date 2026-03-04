@@ -145,7 +145,6 @@ function preload() {
     bqp_imgs['bqp_PL'] = loadImage('assets/bqps/bqp_PL.png');
     bqp_imgs['bqp_PB'] = loadImage('assets/bqps/bqp_PB.png');
     bqp_imgs['bqp_OFF'] = loadImage('assets/bqps/bqp_OFF.png');
-    bqp_imgs['bqp_MFP'] = loadImage('assets/bqps/bqp_MFP.png');
     bqp_imgs['bqp_HH'] = loadImage('assets/bqps/bqp_HH.png');
     bqp_imgs['bqp_FGS'] = loadImage('assets/bqps/bqp_FGS.png');
     bqp_imgs['bqp_SC'] = loadImage('assets/bqps/bqp_SC.png');
@@ -153,6 +152,7 @@ function preload() {
     bqp_imgs['bqp_RS'] = loadImage('assets/bqps/bqp_RS.png');
     bqp_imgs['bqp_SH'] = loadImage('assets/bqps/bqp_SH.png');
     bqp_imgs['bqp_BKM'] = loadImage('assets/bqps/bqp_BKM.png');
+    bqp_imgs['bqp_MFP'] = loadImage('assets/bqps/bqp_MFP.png');
 }
 
 function setup() {
