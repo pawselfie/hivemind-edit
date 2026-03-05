@@ -291,6 +291,7 @@ function setup() {
     select('#unreleasedMax').mouseClicked(expandPanel.bind(null, 'unreleased'));
     select('#unreleasedMin').mouseClicked(expandPanel.bind(null, 'unreleased', 'true'));
 
+    select('#selectAll').mouseClicked(selectAll);
     select('#btn-U').mouseClicked(changeSlot.bind(null, 'U', 'bee'));
     select('#btn-LVL').mouseClicked(changeSlot.bind(null, 0, 'level'));
     select('#btn-FLIP').mouseClicked(changeSlot.bind(null, 0, 'flip'));
@@ -419,7 +420,7 @@ function loadHive() {
     setMode('app', true);
 }
 
-function newHive() {
+async function newHive() {
     hive = {
         name: 'hive',
         slots: [],
@@ -429,16 +430,16 @@ function newHive() {
     };
     hexes = [];
     hexesNormal = [];
-    setMode('app');
+    await setMode('app');
 }
 
 
-function setMode(m, loaded=false) {
+async function setMode(m, loaded=false) {
     if (m == 'menu') {
         if (mode == 'app') {
             let x = madeChanges();
             if (!hiveSaved && x) {
-                let leave = confirm('are you sure? you haven\'t saved your hive!')
+                let leave = await showModal({ message: "are you sure? you haven't saved your hive!", type: 'confirm' });
                 if (!leave) {
                     return;
                 }
@@ -453,11 +454,11 @@ function setMode(m, loaded=false) {
         select('#app').attribute('data-status', 'inactive');
     } else {
         if (!loaded) {
-            let x = prompt('enter hive name (max 15 chars): (this can be changed later)', 'hive');
+            let x = await showModal({ message: 'Enter hive name (max 15 chars): (this can be changed later)', type: 'prompt', defaultValue: 'hive' });
             if (!x) { return; }
             hive.name = x.substring(0, 16);
 
-            let n = prompt('how many hive slots will the hive use (25-50): (this can be changed later)', '50');
+            let n = await showModal({ message: 'How many hive slots will the hive use (25-50): (this can be changed later)', type: 'prompt', defaultValue: '50' });
             if (!isNaN(n) && !isNaN(parseFloat(n))) {
                 const slotCount = clamp(parseInt(n), 25, 50);
                 hive.slots = new Array(slotCount).fill('U');
@@ -500,8 +501,8 @@ function removeSlot() {
     hive.beequip.pop();
 }
 
-function changeName() {
-    let x = prompt('enter hive name (max 15 chars):', 'hive');
+async function changeName() {
+    let x = await showModal({ message: 'Enter hive name (max 15 chars):', type: 'prompt', defaultValue: 'hive' });
     if (!x) {
         return;
     }
@@ -571,12 +572,12 @@ function exportText() {
     };
     const jsonStr = JSON.stringify(hiveData);
     navigator.clipboard.writeText(jsonStr).then(() => {
-        alert('copied to clipboard!');
+        showModal({ message: 'Copied to clipboard!', type: 'alert' });
     });
 }
 
-function importText() {
-    let jsonStr = prompt('Enter hive data:')
+async function importText() {
+    let jsonStr = await showModal({ message: 'Enter hive data:', type: 'prompt' });
     if (!jsonStr) { return; }
     try {
         const hiveData = JSON.parse(jsonStr);
@@ -587,7 +588,7 @@ function importText() {
         hive.beequip = hiveData.beequip || [];
         setMode('app', true);
     } catch (error) {
-        alert('Invalid hive data.')
+        showModal({ message: 'Invalid hive data.', type: 'alert' });
     }
 }
 
@@ -603,7 +604,7 @@ function expandPanel(type, collapse) {
     }
 }
 
-function changeSlot(type, category) {
+async function changeSlot(type, category) {
     if (hive.slots.length < 25) {
         while (hive.slots.length != 25) {
             hive.slots.push('U');
@@ -612,7 +613,7 @@ function changeSlot(type, category) {
     let uniqueSelected = [...new Set(selected)];
     let level = null;
     if (category === 'level') {
-        let n = prompt('What level do you want to set the selected hive slots ?', '20');
+        let n = await showModal({ message: 'What level do you want to set the selected hive slots?', type: 'prompt', defaultValue: '20' });
         if (!n || isNaN(n)) return;
         level = clamp(parseInt(n), 1, 25);
     }
@@ -643,8 +644,8 @@ function changeSlot(type, category) {
     hexes = hexesNormal.splice();
 }
 
-function clearHive() {
-    if (!confirm('Clear all bees, beequips, and mutations from every slot?')) return;
+async function clearHive() {
+    if (!await showModal({ message: 'Clear all bees, beequips, and mutations from every slot?', type: 'confirm' })) return;
     const n = hive.slots.length;
     hive.slots = new Array(n).fill('U');
     hive.mutation = new Array(n).fill(null);
@@ -665,3 +666,58 @@ function checkWindowSize() {
 
 window.addEventListener('load', checkWindowSize);
 window.addEventListener('resize', checkWindowSize);
+
+function showModal({ message, type = 'alert', defaultValue = '' }) {
+    return new Promise(resolve => {
+        const overlay = document.getElementById('modal-overlay');
+        const msgEl = document.getElementById('modal-message');
+        const inputEl = document.getElementById('modal-input');
+        const cancelBtn = document.getElementById('modal-cancel');
+        const okBtn = document.getElementById('modal-ok');
+
+        msgEl.textContent = message;
+        inputEl.style.display = type === 'prompt' ? 'block' : 'none';
+        cancelBtn.style.display = type === 'alert' ? 'none' : '';
+        if (type === 'prompt') inputEl.value = defaultValue;
+
+        overlay.classList.add('active');
+
+        function cleanup() {
+            overlay.classList.remove('active');
+            okBtn.removeEventListener('click', onOk);
+            cancelBtn.removeEventListener('click', onCancel);
+            document.removeEventListener('keydown', onKeydown);
+        }
+
+        function onOk() {
+            cleanup();
+            if (type === 'prompt') resolve(inputEl.value);
+            else if (type === 'confirm') resolve(true);
+            else resolve();
+        }
+
+        function onCancel() {
+            cleanup();
+            if (type === 'confirm') resolve(false);
+            else resolve(null);
+        }
+
+        function onKeydown(e) {
+            if (e.key === 'Enter') onOk();
+            else if (e.key === 'Escape') type === 'alert' ? onOk() : onCancel();
+        }
+
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+        document.addEventListener('keydown', onKeydown);
+
+        if (type === 'prompt') setTimeout(() => inputEl.focus(), 50);
+    });
+}
+
+function selectAll() {
+    selected = [];
+    for (let i = 0; i < hive.slots.length; i++) {
+        selected.push(i);
+    }
+}
