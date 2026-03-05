@@ -39,6 +39,7 @@ Plan your hive layout visually, assign bees, set levels, apply mutations, equip 
 | `Ctrl + V` | Paste into selected slot |
 | `Ctrl + I` | Set level on selected slots |
 | `Ctrl + Q` | Clear hive |
+| `Backspace` | Clear bee, beequip, and mutation from selected slots |
 | `Shift + Click` | Add slot to selection |
 | `Shift + Drag` | Drag-select multiple slots |
 

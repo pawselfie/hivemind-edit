@@ -801,6 +801,18 @@ function keyPressed() {
     }
     if (mode !== 'app') return;
     if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+    if (key === 'Backspace') {
+        if (selected.length === 0) return false;
+        saveUndoState();
+        for (const i of [...new Set(selected)]) {
+            hive.slots[i] = 'U';
+            hive.beequip[i] = null;
+            hive.mutation[i] = null;
+        }
+        selected = [];
+        hexes = hexesNormal.slice();
+        return false;
+    }
     if (!keyIsDown(CONTROL)) return;
     const k = key.toLowerCase();
     if (k === 'z') { undo(); return false; }
