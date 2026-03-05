@@ -78,6 +78,21 @@ header {
     flex: 1;
     overflow-y: auto;
     min-width: 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+}
+
+.bee-col::-webkit-scrollbar {
+    width: 4px;
+}
+
+.bee-col::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.bee-col::-webkit-scrollbar-thumb {
+    background-color: var(--accent);
+    border-radius: 4px;
 }
 
 .canvasContainer {
