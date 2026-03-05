@@ -22,31 +22,6 @@ sizeOverlay.style.padding = '20px';
 sizeOverlay.innerText = 'Please make your window bigger.\nGoing smaller might break the website visually.';
 document.body.appendChild(sizeOverlay);
 
-function isMobile() {
-    return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-if (isMobile()) {
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = 0;
-    overlay.style.left = 0;
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(0,0,0,0.85)';
-    overlay.style.color = '#fff';
-    overlay.style.display = 'flex';
-    overlay.style.alignItems = 'center';
-    overlay.style.justifyContent = 'center';
-    overlay.style.fontSize = '24px';
-    overlay.style.textAlign = 'center';
-    overlay.style.padding = '20px';
-    overlay.style.zIndex = 9999;
-    overlay.innerText = "Deepsea Hive Builder is not available on mobile devices.";
-    document.body.appendChild(overlay);
-    throw new Error('Mobile no more');
-}
-
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 function preload() {
