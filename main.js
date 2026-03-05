@@ -296,6 +296,7 @@ function setup() {
     select('#btn-FLIP').mouseClicked(changeSlot.bind(null, 0, 'flip'));
     select('#removeBeequip').mouseClicked(changeSlot.bind(null, 0, 'removequip'));
     select('#removeMutation').mouseClicked(changeSlot.bind(null, null, 'removemut'));
+    select('#clearHive').mouseClicked(clearHive);
 
     gifted = createCheckbox('gifted (alt)', true)
         .id('giftedSelect')
@@ -638,6 +639,16 @@ function changeSlot(type, category) {
             hive.mutation[i] = null;
         }
     }
+    selected = [];
+    hexes = hexesNormal.splice();
+}
+
+function clearHive() {
+    if (!confirm('Clear all bees, beequips, and mutations from every slot?')) return;
+    const n = hive.slots.length;
+    hive.slots = new Array(n).fill('U');
+    hive.mutation = new Array(n).fill(null);
+    hive.beequip = new Array(n).fill(null);
     selected = [];
     hexes = hexesNormal.splice();
 }
