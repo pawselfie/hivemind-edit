@@ -221,6 +221,33 @@ button {
     pointer-events: none;
 }
 
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 0;
+    background: var(--secondary);
+    font-size: 0.75rem;
+}
+
+footer a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+#atn_icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
 @keyframes save-fadeout {
     to {
         opacity: 0;
