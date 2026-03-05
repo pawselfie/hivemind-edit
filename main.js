@@ -631,7 +631,7 @@ async function clearHive() {
 }
 
 function checkWindowSize() {
-    if (window.innerWidth < 1050 || window.innerHeight < 660) {
+    if (window.innerWidth < 800 || window.innerHeight < 500) {
         sizeOverlay.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     } else {
