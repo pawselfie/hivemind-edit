@@ -104,7 +104,7 @@ function drawHive(x, y, radius, slots, level, mutation, beequip) {
             } else {
                 fill(rarities.SELECTED);
             }
-            stroke(get(0, 0));
+            stroke('#0C1626');
             hexagon(x + xOffset, y + yOffset, radius - 2);
         } else if (hexes[i].type == 'SELECTED') {
             fill(rarities.SELECTED);
@@ -204,7 +204,7 @@ function drawHive(x, y, radius, slots, level, mutation, beequip) {
         xOffset += radius * 1.5;
         hexes.push({x: x + xOffset, y: y + yOffset, bee: 'U', type: 'U'});
         for (let j = 1; j < 25 - slots.length + 1; j++) {
-            stroke(get(0, 0));
+            stroke('#0C1626');
             if (hexes[j + slots.length - 1].type == 'SELECTED') {
                 fill(rarities.SELECTED);
             } else {
