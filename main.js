@@ -22,31 +22,6 @@ sizeOverlay.style.padding = '20px';
 sizeOverlay.innerText = 'Please make your window bigger.\nGoing smaller might break the website visually.';
 document.body.appendChild(sizeOverlay);
 
-function isMobile() {
-    return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-if (isMobile()) {
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = 0;
-    overlay.style.left = 0;
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(0,0,0,0.85)';
-    overlay.style.color = '#fff';
-    overlay.style.display = 'flex';
-    overlay.style.alignItems = 'center';
-    overlay.style.justifyContent = 'center';
-    overlay.style.fontSize = '24px';
-    overlay.style.textAlign = 'center';
-    overlay.style.padding = '20px';
-    overlay.style.zIndex = 9999;
-    overlay.innerText = "Deepsea Hive Builder is not available on mobile devices.";
-    document.body.appendChild(overlay);
-    throw new Error('Mobile no more');
-}
-
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 function preload() {
@@ -291,6 +266,7 @@ function setup() {
     select('#unreleasedMax').mouseClicked(expandPanel.bind(null, 'unreleased'));
     select('#unreleasedMin').mouseClicked(expandPanel.bind(null, 'unreleased', 'true'));
 
+    select('#selectAll').mouseClicked(selectAllSlots);
     select('#btn-U').mouseClicked(changeSlot.bind(null, 'U', 'bee'));
     select('#btn-LVL').mouseClicked(changeSlot.bind(null, 0, 'level'));
     select('#btn-FLIP').mouseClicked(changeSlot.bind(null, 0, 'flip'));
@@ -419,7 +395,7 @@ function loadHive() {
     setMode('app', true);
 }
 
-function newHive() {
+async function newHive() {
     hive = {
         name: 'hive',
         slots: [],
@@ -429,16 +405,16 @@ function newHive() {
     };
     hexes = [];
     hexesNormal = [];
-    setMode('app');
+    await setMode('app');
 }
 
 
-function setMode(m, loaded=false) {
+async function setMode(m, loaded=false) {
     if (m == 'menu') {
         if (mode == 'app') {
             let x = madeChanges();
             if (!hiveSaved && x) {
-                let leave = confirm('are you sure? you haven\'t saved your hive!')
+                let leave = await showModal({ message: "are you sure? you haven't saved your hive!", type: 'confirm' });
                 if (!leave) {
                     return;
                 }
@@ -453,11 +429,11 @@ function setMode(m, loaded=false) {
         select('#app').attribute('data-status', 'inactive');
     } else {
         if (!loaded) {
-            let x = prompt('enter hive name (max 15 chars): (this can be changed later)', 'hive');
+            let x = await showModal({ message: 'Enter hive name (max 15 chars): (this can be changed later)', type: 'prompt', defaultValue: 'hive' });
             if (!x) { return; }
             hive.name = x.substring(0, 16);
 
-            let n = prompt('how many hive slots will the hive use (25-50): (this can be changed later)', '50');
+            let n = await showModal({ message: 'How many hive slots will the hive use (25-50): (this can be changed later)', type: 'prompt', defaultValue: '50' });
             if (!isNaN(n) && !isNaN(parseFloat(n))) {
                 const slotCount = clamp(parseInt(n), 25, 50);
                 hive.slots = new Array(slotCount).fill('U');
@@ -500,8 +476,8 @@ function removeSlot() {
     hive.beequip.pop();
 }
 
-function changeName() {
-    let x = prompt('enter hive name (max 15 chars):', 'hive');
+async function changeName() {
+    let x = await showModal({ message: 'Enter hive name (max 15 chars):', type: 'prompt', defaultValue: 'hive' });
     if (!x) {
         return;
     }
@@ -523,10 +499,11 @@ function saveHive() {
 function exportImage() {
     const beeList = new Map([['U', 'Empty'], ['BA', 'Basic Bee'], ['BO', 'Bomber Bee'], ['BR', 'Brave Bee'], ['BU', 'Bumble Bee'],['CO', 'Cool Bee'], ['HA', 'Hasty Bee'], ['LO', 'Looker Bee'], ['RA', 'Rad Bee'],['RAS', 'Rascal Bee'], ['ST', 'Stubborn Bee'], ['BUB', 'Bubble Bee'], ['BUC', 'Bucko Bee'],['COM', 'Commander Bee'], ['DE', 'Demo Bee'], ['EX', 'Exhausted Bee'], ['FI', 'Fire Bee'],['FR', 'Frosty Bee'], ['HO', 'Honey Bee'], ['RAG', 'Rage Bee'], ['RI', 'Riley Bee'],['SH', 'Shocked Bee'], ['BAB', 'Baby Bee'], ['CA', 'Carpenter Bee'], ['DEM', 'Demon Bee'],['DI', 'Diamond Bee'], ['LI', 'Lion Bee'], ['MU', 'Music Bee'], ['NI', 'Ninja Bee'],['SHY', 'Shy Bee'], ['BUO', 'Buoyant Bee'], ['FU', 'Fuzzy Bee'], ['PR', 'Precise Bee'],['SP', 'Spicy Bee'], ['TA', 'Tadpole Bee'], ['VE', 'Vector Bee'], ['BE', 'Bear Bee'],['COB', 'Cobalt Bee'], ['CR', 'Crimson Bee'], ['FE', 'Festive Bee'], ['GU', 'Gummy Bee'],['PH', 'Photon Bee'], ['PU', 'Puppy Bee'], ['TAB', 'Tabby Bee'], ['VI', 'Vicious Bee'],['WI', 'Windy Bee'], ['DIG', 'Digital Bee']]);
     let pg = createGraphics(472, 613);
-    pg.background(select('body').style('color'));
+    const rootStyle = getComputedStyle(document.documentElement);
+    pg.background(rootStyle.getPropertyValue('--bg').trim());
     pg.textSize(30);
     pg.textAlign(CENTER, CENTER);
-    pg.fill(select('body').style('background-color'));
+    pg.fill(rootStyle.getPropertyValue('--text').trim());
     pg.textFont(fnt);
     pg.text(hive.name, pg.width/2, 25);
     pg.textAlign(LEFT, TOP);
@@ -571,12 +548,12 @@ function exportText() {
     };
     const jsonStr = JSON.stringify(hiveData);
     navigator.clipboard.writeText(jsonStr).then(() => {
-        alert('copied to clipboard!');
+        showModal({ message: 'Copied to clipboard!', type: 'alert' });
     });
 }
 
-function importText() {
-    let jsonStr = prompt('Enter hive data:')
+async function importText() {
+    let jsonStr = await showModal({ message: 'Enter hive data:', type: 'prompt' });
     if (!jsonStr) { return; }
     try {
         const hiveData = JSON.parse(jsonStr);
@@ -587,7 +564,7 @@ function importText() {
         hive.beequip = hiveData.beequip || [];
         setMode('app', true);
     } catch (error) {
-        alert('Invalid hive data.')
+        showModal({ message: 'Invalid hive data.', type: 'alert' });
     }
 }
 
@@ -603,7 +580,7 @@ function expandPanel(type, collapse) {
     }
 }
 
-function changeSlot(type, category) {
+async function changeSlot(type, category) {
     if (hive.slots.length < 25) {
         while (hive.slots.length != 25) {
             hive.slots.push('U');
@@ -612,7 +589,7 @@ function changeSlot(type, category) {
     let uniqueSelected = [...new Set(selected)];
     let level = null;
     if (category === 'level') {
-        let n = prompt('What level do you want to set the selected hive slots ?', '20');
+        let n = await showModal({ message: 'What level do you want to set the selected hive slots?', type: 'prompt', defaultValue: '20' });
         if (!n || isNaN(n)) return;
         level = clamp(parseInt(n), 1, 25);
     }
@@ -643,8 +620,8 @@ function changeSlot(type, category) {
     hexes = hexesNormal.splice();
 }
 
-function clearHive() {
-    if (!confirm('Clear all bees, beequips, and mutations from every slot?')) return;
+async function clearHive() {
+    if (!await showModal({ message: 'Clear all bees, beequips, and mutations from every slot?', type: 'confirm' })) return;
     const n = hive.slots.length;
     hive.slots = new Array(n).fill('U');
     hive.mutation = new Array(n).fill(null);
@@ -654,7 +631,7 @@ function clearHive() {
 }
 
 function checkWindowSize() {
-    if (window.innerWidth < 1050 || window.innerHeight < 660) {
+    if (window.innerWidth < 800 || window.innerHeight < 500) {
         sizeOverlay.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     } else {
@@ -665,3 +642,58 @@ function checkWindowSize() {
 
 window.addEventListener('load', checkWindowSize);
 window.addEventListener('resize', checkWindowSize);
+
+function showModal({ message, type = 'alert', defaultValue = '' }) {
+    return new Promise(resolve => {
+        const overlay = document.getElementById('modal-overlay');
+        const msgEl = document.getElementById('modal-message');
+        const inputEl = document.getElementById('modal-input');
+        const cancelBtn = document.getElementById('modal-cancel');
+        const okBtn = document.getElementById('modal-ok');
+
+        msgEl.textContent = message;
+        inputEl.style.display = type === 'prompt' ? 'block' : 'none';
+        cancelBtn.style.display = type === 'alert' ? 'none' : '';
+        if (type === 'prompt') inputEl.value = defaultValue;
+
+        overlay.classList.add('active');
+
+        function cleanup() {
+            overlay.classList.remove('active');
+            okBtn.removeEventListener('click', onOk);
+            cancelBtn.removeEventListener('click', onCancel);
+            document.removeEventListener('keydown', onKeydown);
+        }
+
+        function onOk() {
+            cleanup();
+            if (type === 'prompt') resolve(inputEl.value);
+            else if (type === 'confirm') resolve(true);
+            else resolve();
+        }
+
+        function onCancel() {
+            cleanup();
+            if (type === 'confirm') resolve(false);
+            else resolve(null);
+        }
+
+        function onKeydown(e) {
+            if (e.key === 'Enter' || (e.key === ' ' && document.activeElement !== inputEl)) onOk();
+            else if (e.key === 'Escape') type === 'alert' ? onOk() : onCancel();
+        }
+
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+        document.addEventListener('keydown', onKeydown);
+
+        if (type === 'prompt') setTimeout(() => inputEl.focus(), 50);
+    });
+}
+
+function selectAllSlots() {
+    selected = [];
+    for (let i = 0; i < hive.slots.length; i++) {
+        selected.push(i);
+    }
+}

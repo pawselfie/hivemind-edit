@@ -19,6 +19,22 @@
         <img src="assets/deepsea_hive_builder.png" id="hivemind_icon"/>
         <p id="headerTitle">Deepsea Hive Builder</p>
     </header>
+    <div id="modal-overlay">
+        <div id="modal-box">
+            <p id="modal-message"></p>
+            <input id="modal-input" type="text" autocomplete="off" />
+            <div id="modal-buttons">
+                <button id="modal-cancel">Cancel</button>
+                <button id="modal-ok">OK</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <a href="https://discord.gg/QWeGutM76U" target="_blank">
+            <img src="assets/atn.webp" id="atn_icon"/>
+            Join Abyssal Trench Network for more BSS tools!
+        </a>
+    </footer>
     <div id="menu" data-status="active">
         <div class="canvasContainer"></div>
         <div class="toolPanel">
@@ -306,6 +322,7 @@
                     </button>
                 </div>
                 <div id="bees-general" class="bee-section" data-status="active">
+                    <button id="selectAll">Select All</button>
                     <button id="btn-U">Empty slot</button>
                     <button id="btn-LVL">Set Level</button>
                     <button id="btn-FLIP">Flip Gifted Value</button>
