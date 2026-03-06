@@ -313,6 +313,9 @@ function setup() {
     select('#generalMax').mouseClicked(expandPanel.bind(null, 'general'));
     select('#generalMin').mouseClicked(expandPanel.bind(null, 'general', 'true'));
 
+    select('#partialMax').mouseClicked(expandPanel.bind(null, 'partial'));
+    select('#partialMin').mouseClicked(expandPanel.bind(null, 'partial', 'true'));
+
     select('#commonMax').mouseClicked(expandPanel.bind(null, 'common'));
     select('#commonMin').mouseClicked(expandPanel.bind(null, 'common', 'true'));
 
@@ -349,7 +352,10 @@ function setup() {
     select('#btn-FLIP').mouseClicked(changeSlot.bind(null, 0, 'flip'));
     select('#removeBeequip').mouseClicked(changeSlot.bind(null, 0, 'removequip'));
     select('#removeMutation').mouseClicked(changeSlot.bind(null, null, 'removemut'));
+    select('#clearSlot').mouseClicked(changeSlot.bind(null, 0, 'clearslot'));
     select('#clearPartial').mouseClicked(changeSlot.bind(null, 0, 'clearpartial'));
+    select('#removePartialBeequip').mouseClicked(changeSlot.bind(null, null, 'removepartialquip'));
+    select('#removePartialMutation').mouseClicked(changeSlot.bind(null, null, 'removepartialmut'));
     select('#btn-PLVL').mouseClicked(changeSlot.bind(null, 0, 'partiallevel'));
     select('#clearHive').mouseClicked(clearHive);
     select('#toggleLevels').mouseClicked(toggleHideLevels);
@@ -772,10 +778,22 @@ async function changeSlot(type, category) {
             hive.beequip[i] = null;
         } else if (category === 'removemut') {
             hive.mutation[i] = null;
+        } else if (category === 'clearslot') {
+            hive.slots[i]    = 'U';
+            hive.beequip[i]  = null;
+            hive.mutation[i] = null;
+            hive.partialBee[i]      = null;
+            hive.partialBeequip[i]  = null;
+            hive.partialLevel[i]    = null;
+            hive.partialMutation[i] = null;
         } else if (category === 'clearpartial') {
             hive.partialBee[i]      = null;
             hive.partialBeequip[i]  = null;
             hive.partialLevel[i]    = null;
+            hive.partialMutation[i] = null;
+        } else if (category === 'removepartialquip') {
+            hive.partialBeequip[i] = null;
+        } else if (category === 'removepartialmut') {
             hive.partialMutation[i] = null;
         }
     }

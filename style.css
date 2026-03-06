@@ -292,7 +292,7 @@ button {
     gap: 2px;
 }
 
-#bees-general *, #bees-common *, #bees-rare *, #bees-epic *, #bees-legend *, #bees-mythic *, #bees-event *, #bees-mutation *, #bees-beequip *, #bees-beesmas *, #bees-unreleased * {
+#bees-general *, #bees-common *, #bees-rare *, #bees-epic *, #bees-legend *, #bees-mythic *, #bees-event *, #bees-mutation *, #bees-beequip *, #bees-beesmas *, #bees-unreleased *, #bees-partial * {
     width: 32%;
 }
 
