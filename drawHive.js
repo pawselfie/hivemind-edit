@@ -18,7 +18,7 @@ function drawHive(x, y, radius, slots, level, mutation, beequip, partialBee, par
         LEGENDARY: color(79, 255, 240),
         MYTHIC: color(183, 158, 247),
         EVENT: color(147, 220, 98),
-        U: color(117, 101, 33),
+        U: color(200, 200, 200),
         SELECTED: color(27, 209, 94)
     };
 

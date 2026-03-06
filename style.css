@@ -212,7 +212,7 @@ header {
 
 canvas {
     position: relative;
-    border-radius: 7.5px;
+    border-radius: 16px;
 }
 
 .toolPanel button {
@@ -312,7 +312,7 @@ button:not(.minMax):active {
     display: flex !important;
     flex-wrap: wrap;
     gap: 2px;
-    max-height: 400px;
+    max-height: 800px;
     overflow: hidden;
     transition: max-height 0.3s ease, opacity 0.2s ease;
     opacity: 1;
@@ -358,6 +358,7 @@ footer {
     background: var(--secondary);
     font-size: 0.75rem;
     padding-left: 1%;
+    border-radius: 0 0 16px 16px;
 }
 
 footer a {
