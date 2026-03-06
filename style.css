@@ -53,12 +53,104 @@ header {
 
 #app {
     grid-template-columns: 472px 1fr 1fr 1fr;
+    grid-template-rows: repeat(3, 1fr) auto auto;
     grid-template-areas:
         'canvas beePanel beePanel beePanel'
         'canvas beePanel beePanel beePanel'
         'canvas beePanel beePanel beePanel'
-        'toolPanel toolPanel toolPanel toolPanel';
+        'toolPanel toolPanel toolPanel toolPanel'
+        'presetPanel presetPanel presetPanel presetPanel';
     gap: 10px;
+}
+
+#presetPanel {
+    grid-area: presetPanel;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 5px 8px;
+    background: var(--secondary);
+    border-radius: 6px;
+}
+
+#preset-tabs {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.preset-section-label {
+    font-size: 0.7rem;
+    opacity: 0.6;
+    white-space: nowrap;
+    margin-right: 2px;
+    user-select: none;
+}
+
+.preset-tab {
+    padding: 1px 10px;
+    font-size: 0.72rem;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    height: auto;
+}
+
+.preset-tab.active {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+#preset-list {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+}
+
+#preset-list::-webkit-scrollbar {
+    height: 3px;
+}
+
+#preset-list::-webkit-scrollbar-thumb {
+    background-color: var(--accent);
+    border-radius: 3px;
+}
+
+.preset-btn {
+    flex-shrink: 0;
+    padding: 1px 10px;
+    font-size: 0.72rem;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    height: auto;
+}
+
+.custom-preset-entry {
+    display: inline-flex;
+    align-items: stretch;
+    flex-shrink: 0;
+}
+
+.custom-preset-entry .preset-btn {
+    border-radius: 4px 0 0 4px;
+}
+
+.custom-preset-del {
+    padding: 1px 6px;
+    font-size: 0.72rem;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    height: auto;
+    opacity: 0.5;
+    border-left: none;
+}
+
+.custom-preset-del:hover {
+    opacity: 1;
+    color: #e55;
 }
 
 [data-status~='inactive'] {

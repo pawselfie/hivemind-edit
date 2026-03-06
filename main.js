@@ -7,6 +7,55 @@ HTMLCanvasElement.prototype.getContext = function(type, attrs) {
 let mode, cnv, fnt, hive, hiveSaved, hexes, hexesNormal, selected, multSelt, gifted, bee_btns, bqp_btns, mut_btns, dragging=false;
 let undoStack = [];
 let slotClipboard = null;
+
+// ── PRESETS ──────────────────────────────────────────────────────────────────
+// Set `data` to the string produced by "Export as string" for each preset.
+const PRESETS = {
+    blue: [
+        { name: 'Blue Hive',           data: '{"name":"Blue Hive","slots":["fe","gu","be","pu","tab","bub","buc","wi","co","bu","ex","di","ba","di","st","com","di","di","di","lo","mu","mu","di","ni","mu","ta","ta","ta","ta","ta","ta","buo","ta","buo","ta","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo"],"level":[20,20,20,20,20,20,20,20,20,20,20,21,20,21,20,20,21,21,21,20,20,20,21,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20],"mutation":["BAR","BMS","BAR","BMS","BAR","BMS","BMS","BMS","BMS","BMS","BMS","CAM","BMS","CAM","BMS","BMS","CAM","CAM","CAM","BMS","BMS","BMS","CAM","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BAR","BMS","BAR","BMS","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR"],"beequip":[null,null,"PINE","RE",null,"CAMP","TOY",null,"WH","PINE",null,"EL","BEAD","EL",null,null,"AU","RO","CAN",null,null,null,"SN",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}' },
+        { name: 'Blessing Boost Comp', data: '{"name":"Blessing Boost Comp","slots":["fe","be","ba","wi","pu","bu","buc","ex","bub","lo","mu","mu","ni","mu","mu","ta","ta","di","ta","ta","ta","ta","ta","ta","ta","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo"],"level":[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20],"mutation":["BAR","BAR","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","CAM","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR"],"beequip":[null,"PINE","BEAD","SN","RE","PINE","TOY",null,null,"AU",null,null,null,null,null,null,null,"RO",null,null,null,null,null,null,null,"BER","BER","BEES","BEES","BEES",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}' },
+        { name: 'Diamond Comp',        data: '{"name":"Diamond Comp","slots":["fe","wi","be","pu","tab","bub","buc","ba","co","bu","ex","mu","ni","mu","lo","mu","di","di","di","mu","di","di","di","di","di","ta","ta","di","ta","ta","ta","ta","buo","ta","ta","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo"],"level":[21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,22,22,22,21,22,22,22,22,22,21,21,22,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21],"mutation":["BAR","BMS","BAR","BMS","BAR","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","CAM","CAM","CAM","BMS","CAM","CAM","CAM","CAM","CAM","BMS","BMS","CAM","BMS","BMS","BMS","BMS","BAR","BMS","BMS","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR"],"beequip":["FES",null,"PINE","RE",null,"CAMP","TOY","BEAD",null,"PINE",null,null,null,null,null,null,"CAN","RO","AU",null,null,"EL","SN","EL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}' },
+        { name: 'Honeyday Comp',      data: '{"name":"Honeyday Comp","slots":["fe","pu","ta","gu","be","bu","ex","bub","buc","st","mu","di","di","di","mu","mu","di","di","di","mu","di","di","di","di","di","ta","di","di","di","ta","ta","buo","ta","buo","ta","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo","buo"],"level":[21,21,21,21,21,21,21,21,21,21,21,22,22,22,21,21,22,22,22,21,22,22,22,22,22,21,22,22,22,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21],"mutation":["BAR","BMS","BMS","BMS","BAR","BMS","BMS","BMS","BMS","BMS","BMS","CAM","CAM","CAM","BMS","BMS","CAM","CAM","CAM","BMS","CAM","CAM","CAM","CAM","CAM","BMS","CAM","CAM","CAM","BMS","BMS","BAR","BMS","BAR","BMS","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR"],"beequip":["FES","RE",null,null,"PINE","PINE",null,null,null,"BEAD",null,"BER",null,"BER",null,null,"AU","RO","CAN",null,null,"EL","SN","EL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}' },
+        { name: 'Pop Gummy Comp',     data: '{"name":"Pop Gummy Comp","slots":["be","ph","gu","wi","tab","pu","st","dig","lo","cob","ha","ho","ba","sh","co","buc","ca","li","mu","bub","ni","ve","ve","ve","di","ve","ve","ve","ve","ve","ve","ta","ta","ta","ve","ta","ta","ta","ta","ta","pr","pr","ta","pr","pr","pr","pr","buo","pr","pr"],"level":[22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22],"mutation":["BAR","BMS","BMS","BMS","BAR","BMS","BMS","GA","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS"],"beequip":[null,"PAP",null,null,null,null,"SM","SW","PA","TO","PA",null,"PI",null,"WH","TOY","SM","TO",null,"CAMP",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"KA",null,null]}' },
+    ],
+    white: [
+        { name: 'White Hive',         data: '{"name":"White Hive","slots":["wi","be","dig","tab","gu","pu","lo","ba","st","ph","com","ha","bo","br","de","ho","bab","mu","bab","sh","bab","pr","ca","pr","bab","pr","pr","li","pr","pr","ve","ve","pr","ve","ve","ve","ve","ve","ve","ve","ve","ve","ve","ve","ve","ve","ve","ve","ve","ve"],"level":[22,22,23,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22],"mutation":["BMS","BAR","GA","BAR","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS"],"beequip":[null,null,"SW",null,null,"RE","PA","PI","SM","PAP","WH","BEAD","PAP","TOY","TOY","PA",null,null,null,"KA",null,null,"SM",null,null,null,null,"TO",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}' },
+    ],
+    red: [
+        { name: 'Red Hive',           data: '{"name":"Red Hive","slots":["st","ri","ba","ri","ra","ta","bab","com","bab","ta","ve","ve","ca","ve","ve","ve","ve","ve","ve","ve","ve","pr","buo","sp","ve","pr","pr","dig","sp","sp","pr","pr","be","sp","sp","pr","pr","tab","sp","sp","pr","pr","cr","sp","sp","pr","pr","ph","sp","sp"],"level":[21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,22,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21],"mutation":["BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BAR","BMS","BMS","BMS","GA","BAR","BAR","BMS","BMS","BAR","BAR","BAR","BMS","BMS","BAR","BAR","BAR","BMS","BMS","BMS","BAR","BAR","BMS","BMS","BMS","BAR","BAR"],"beequip":["CAMP","TOY","PI","TOY",null,null,null,"WH",null,"PO",null,null,"CH",null,null,null,null,null,null,null,null,null,"KA","SM",null,null,null,"SW",null,"SM",null,null,null,null,null,null,null,null,null,null,null,null,"TO",null,null,null,null,"PAP",null,null]}' },
+        { name: 'Bloom Comp',         data: '{"name":"Bloom Comp","slots":["ph","tab","dig","be","cr","ra","com","ba","ri","st","ta","bab","ha","bab","ta","ve","ve","ca","ve","ve","ve","ve","mu","ve","ve","ve","sp","shy","sp","ve","sp","sp","sp","sp","sp","sp","sp","sp","sp","sp","pr","pr","pr","pr","pr","pr","pr","pr","pr","pr"],"level":[22,22,23,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22],"mutation":["BMS","BAR","GA","BAR","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BAR","BMS","BAR","BMS","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BAR","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS"],"beequip":["PAP",null,"SW",null,"TO","PA","WH","PI","TOY","CAMP","PO",null,"PA",null,"PO",null,null,"CH",null,null,null,null,null,null,null,null,"SM","PAP","SM",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}' },
+        { name: 'Scorch Gummy Comp',  data: '{"name":"Scorch Gummy Comp","slots":["be","gu","cr","ph","tab","br","ra","dig","st","ha","ri","ho","ba","com","sh","bab","li","shy","mu","bab","ta","sp","ca","sp","ta","sp","pr","sp","pr","sp","pr","pr","pr","pr","pr","pr","pr","pr","pr","pr","ve","ve","ve","ve","ve","ve","ve","ve","ve","ve"],"level":[22,22,22,22,22,22,22,23,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22],"mutation":["BAR","BMS","BMS","BMS","BAR","BMS","BMS","GA","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BAR","BMS","BAR","BMS","BAR","BMS","BAR","BMS","BAR","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS","BMS"],"beequip":[null,null,"TO","PAP",null,"TOY","PA","SW","CAMP","PA","TOY","SM","PI","WH","KA",null,"TO","PAP",null,null,"PO",null,"SM",null,"PO",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}' },
+    ],
+    rbc: [
+        { name: 'RBC Hive',           data: '' },
+        { name: 'RBC Blue Hive',      data: '' },
+    ],
+    alts: [
+        { name: 'Fuzzy Alt',          data: '' },
+        { name: 'Tad Alt',            data: '' },
+        { name: 'Buoyant Alt',        data: '' },
+        { name: 'Blue-Guide Alt',     data: '' },
+        { name: 'Guide Alt',          data: '' },
+        { name: 'Attack Alt',         data: '' },
+        { name: 'Mondo Attack Alt',   data: '' },
+        { name: 'Guide-Fuzzy Alt',    data: '' },
+        { name: 'Guide-Buo Alt',      data: '' },
+        { name: 'Tri-Hybrid Alt',     data: '' },
+        { name: 'Tetra-Hybrid Alt',   data: '' },
+    ],
+};
+// Parse each preset's data string into hive arrays
+(function() {
+    for (const group of Object.values(PRESETS)) {
+        for (const p of group) {
+            const parsed = p.data ? JSON.parse(p.data) : {};
+            p.slots    = parsed.slots    || new Array(50).fill('U');
+            p.level    = parsed.level    || new Array(50).fill(0);
+            p.mutation = parsed.mutation || new Array(50).fill(null);
+            p.beequip  = parsed.beequip  || new Array(50).fill(null);
+        }
+    }
+})();
 let lastCtrlQTime = 0;
 const bee_imgs = {};
 const bqp_imgs = {};
@@ -287,6 +336,8 @@ function setup() {
     gifted = createCheckbox('gifted (alt)', true)
         .id('giftedSelect')
         .parent(select('#multSeltCon'));
+
+    initPresetPanel();
 }
 
 function draw() {
@@ -766,6 +817,103 @@ function pasteSelection() {
     }
     selected = [];
     hexes = hexesNormal.slice();
+}
+
+function getCustomPresets() {
+    try { return JSON.parse(localStorage.getItem('customPresets') || '[]'); }
+    catch { return []; }
+}
+
+function saveCustomPresets(arr) {
+    localStorage.setItem('customPresets', JSON.stringify(arr));
+}
+
+function initPresetPanel() {
+    let activeGroup = 'blue';
+    const tabs = document.querySelectorAll('.preset-tab');
+    const list = document.getElementById('preset-list');
+
+    function renderPresets(group) {
+        list.innerHTML = '';
+        if (group === 'custom') {
+            const saveBtn = document.createElement('button');
+            saveBtn.className = 'preset-btn preset-save-btn';
+            saveBtn.textContent = '+ Save current';
+            saveBtn.addEventListener('click', async () => {
+                const name = await showModal({ message: 'Name this preset:', type: 'prompt', defaultValue: hive.name || 'My Preset' });
+                if (!name) return;
+                const customs = getCustomPresets();
+                customs.push({
+                    name,
+                    slots:    hive.slots.slice(),
+                    level:    hive.level.slice(),
+                    mutation: hive.mutation.slice(),
+                    beequip:  hive.beequip.slice(),
+                });
+                saveCustomPresets(customs);
+                renderPresets('custom');
+            });
+            list.appendChild(saveBtn);
+
+            for (const preset of getCustomPresets()) {
+                const wrap = document.createElement('span');
+                wrap.className = 'custom-preset-entry';
+
+                const btn = document.createElement('button');
+                btn.className = 'preset-btn';
+                btn.textContent = preset.name;
+                btn.addEventListener('click', () => loadPreset(preset));
+
+                const del = document.createElement('button');
+                del.className = 'custom-preset-del';
+                del.textContent = '×';
+                del.addEventListener('click', async () => {
+                    const ok = await showModal({ message: `Delete "${preset.name}"?`, type: 'confirm' });
+                    if (!ok) return;
+                    saveCustomPresets(getCustomPresets().filter(p => p.name !== preset.name));
+                    renderPresets('custom');
+                });
+
+                wrap.appendChild(btn);
+                wrap.appendChild(del);
+                list.appendChild(wrap);
+            }
+            return;
+        }
+        for (const preset of PRESETS[group]) {
+            const btn = document.createElement('button');
+            btn.className = 'preset-btn';
+            btn.textContent = preset.name;
+            btn.addEventListener('click', () => loadPreset(preset));
+            list.appendChild(btn);
+        }
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            activeGroup = tab.dataset.group;
+            renderPresets(activeGroup);
+        });
+    });
+
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.group === activeGroup));
+    renderPresets(activeGroup);
+}
+
+function loadPreset(preset) {
+    saveUndoState();
+    hive = {
+        name:     preset.name,
+        slots:    preset.slots.slice(),
+        level:    preset.level.slice(),
+        mutation: preset.mutation.slice(),
+        beequip:  preset.beequip.slice(),
+    };
+    selected = [];
+    hexes = [];
+    hexesNormal = [];
 }
 
 async function shareURL() {
