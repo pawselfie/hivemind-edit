@@ -1,4 +1,4 @@
-function drawHive(x, y, radius, slots, level, mutation, beequip) {
+function drawHive(x, y, radius, slots, level, mutation, beequip, partialBee, partialBeequip, partialLevel, partialMutation) {
     hexes = [];
     const mutations = {
         NONE: color(255, 254, 254),
@@ -131,6 +131,50 @@ function drawHive(x, y, radius, slots, level, mutation, beequip) {
             imageMode(CENTER);
             image(img, x + xOffset, y + yOffset, radius + 8, radius + 8);
 
+            // PARTIAL BEE on non-empty slot (drawn here so gifted border and beequip render on top)
+            if (partialBee && partialBee[i] != null) {
+                const pCode = partialBee[i];
+                const pUpper = pCode.toUpperCase();
+                if (bees[pUpper]) {
+                    const pImg = bee_imgs[`bee_${pUpper}`];
+                    if (pImg) {
+                        const cx = hexes[hexes.length - 1].x;
+                        const cy = hexes[hexes.length - 1].y;
+                        const h = radius * Math.sqrt(3) / 2;
+
+                        drawingContext.save();
+                        drawingContext.beginPath();
+                        drawingContext.moveTo(cx, cy);
+                        drawingContext.lineTo(cx + radius / 2, cy - h);  // top-right
+                        drawingContext.lineTo(cx + radius,     cy);       // right
+                        drawingContext.lineTo(cx + radius / 2, cy + h);  // bottom-right
+                        drawingContext.lineTo(cx - radius / 2, cy + h);  // bottom-left
+                        drawingContext.closePath();
+                        drawingContext.clip();
+
+                        const pRarityCol = rarities[bees[pUpper][0]];
+                        fill(pRarityCol);
+                        noStroke();
+                        rect(cx - radius, cy - radius * 1.2, radius * 2, radius * 2.4);
+
+                        if (pUpper !== 'LO' && pUpper !== 'CA') {
+                            const c = colours[bees[pUpper][1]];
+                            tint(red(c), green(c), blue(c));
+                        } else {
+                            noTint();
+                        }
+                        imageMode(CENTER);
+                        image(pImg, cx, cy, radius + 8, radius + 8);
+                        noTint();
+                        drawingContext.restore();
+                        // dividing line
+                        stroke(0);
+                        strokeWeight(1);
+                        line(cx + radius / 2, cy - h, cx - radius / 2, cy + h);
+                    }
+                }
+            }
+
             // DRAWING BEE'S GIFTED BORDER
             if (slots[i] == slots[i].toLowerCase()) {
                 stroke('#ff0');
@@ -169,16 +213,103 @@ function drawHive(x, y, radius, slots, level, mutation, beequip) {
                     if (bqpImg) {
                         let posX = hexes[hexes.length - 1].x;
                         let posY = hexes[hexes.length - 1].y;
+                        const hasPartial = partialBee && partialBee[i] != null;
 
                         imageMode(CENTER);
                         noTint();
-                        image(bqpImg, posX, posY+20, radius - 50, radius - 50);
+                        if (hasPartial) {
+                            image(bqpImg, posX - radius * 0.4, posY + radius * 0.55, radius - 50, radius - 50);
+                        } else {
+                            image(bqpImg, posX, posY+20, radius - 50, radius - 50);
+                        }
                     }
                 }
             } catch (error) {
             }
         }
-        
+
+        // PARTIAL BEE on empty slot (no gifted/beequip to worry about here)
+        if (slots[i] == 'U' && partialBee && partialBee[i] != null) {
+            const pCode = partialBee[i];
+            const pUpper = pCode.toUpperCase();
+            if (bees[pUpper]) {
+                const pImg = bee_imgs[`bee_${pUpper}`];
+                if (pImg) {
+                    const cx = hexes[hexes.length - 1].x;
+                    const cy = hexes[hexes.length - 1].y;
+                    const h = radius * Math.sqrt(3) / 2;
+
+                    drawingContext.save();
+                    drawingContext.beginPath();
+                    drawingContext.moveTo(cx, cy);
+                    drawingContext.lineTo(cx + radius / 2, cy - h);  // top-right
+                    drawingContext.lineTo(cx + radius,     cy);       // right
+                    drawingContext.lineTo(cx + radius / 2, cy + h);  // bottom-right
+                    drawingContext.lineTo(cx - radius / 2, cy + h);  // bottom-left
+                    drawingContext.closePath();
+                    drawingContext.clip();
+
+                    const pRarityCol = rarities[bees[pUpper][0]];
+                    fill(pRarityCol);
+                    noStroke();
+                    rect(cx - radius, cy - radius * 1.2, radius * 2, radius * 2.4);
+
+                    if (pUpper !== 'LO' && pUpper !== 'CA') {
+                        const c = colours[bees[pUpper][1]];
+                        tint(red(c), green(c), blue(c));
+                    } else {
+                        noTint();
+                    }
+                    imageMode(CENTER);
+                    image(pImg, cx, cy, radius + 8, radius + 8);
+                    noTint();
+                    drawingContext.restore();
+                    // dividing line
+                    stroke(0);
+                    strokeWeight(1);
+                    line(cx + radius / 2, cy - h, cx - radius / 2, cy + h);
+                }
+            }
+        }
+
+        // PARTIAL BEEQUIP (bottom-right corner)
+        if (partialBee && partialBee[i] != null && partialBeequip && partialBeequip[i] != null) {
+            try {
+                const imgName = `bqp_${partialBeequip[i].toUpperCase()}`;
+                const bqpImg = bqp_imgs[imgName];
+                if (bqpImg) {
+                    const cx = hexes[hexes.length - 1].x;
+                    const cy = hexes[hexes.length - 1].y;
+                    imageMode(CENTER);
+                    noTint();
+                    image(bqpImg, cx + radius * 0.4, cy + radius * 0.55, radius - 50, radius - 50);
+                }
+            } catch (error) {}
+        }
+
+        // PARTIAL LEVEL
+        if (!hideLevels && partialBee && partialBee[i] != null) try {
+            const pLvl = partialLevel?.[i];
+            if (pLvl) {
+                const pLvlStr = pLvl.toString();
+                const pMutKey = partialMutation?.[i]?.toUpperCase() || 'NONE';
+                const rLvlStr = level?.[i] ? level[i].toString() : null;
+                const rMutKey = mutation?.[i]?.toUpperCase() || 'NONE';
+                if (pLvlStr !== rLvlStr || pMutKey !== rMutKey) {
+                    let posX = hexes[hexes.length - 1].x + 18;
+                    let posY = hexes[hexes.length - 1].y;
+                    let pMutColor = mutations?.[pMutKey] || mutations.NONE;
+                    textFont(hwfnt);
+                    textAlign(CENTER, CENTER);
+                    textSize(20);
+                    fill(pMutColor);
+                    stroke(0);
+                    strokeWeight(2);
+                    text(pLvlStr, posX, posY);
+                    textFont(fnt);
+                }
+            }
+        } catch(error) {}
 
         if (selected.length === 0) {
             hexesNormal = hexes.map(h => ({...h}));

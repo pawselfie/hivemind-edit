@@ -12,14 +12,17 @@ Plan your hive layout visually, assign bees, set levels, apply mutations, equip 
 - **Unreleased Beequips** — Has all 12 Unreleased Beequips found in Onett's inventory
 - **Better Style** — A more consistent style made out of a shade of dark blue
 - **Replaced Dialogs** — Dialogs are now their own GUI, and aren't dependant on the browser
-- **Keybinds** — You can do quick actions via Keybinds instead of having to use your mouse
+- **Keybinds** — You can do quick actions via Keybinds instead of having to use your mouse; a full keybind reference is accessible via the **Show Keybinds** button in the header
 - **Share your Hive** — Send a 1-Click URL of your hive so others can edit it
 - **More Utility Buttons:**
   - Select All Slots
   - Remove Mutation
   - Clear Hive
   - Hide/Show Levels
+  - Empty Partial Slot
+  - Set Partial Level
 - **Presets** — Load curated hive builds from the menu across Blue, Red, White, RBC, and Alts tabs; save and manage your own builds in the Custom tab
+- **Partial Slots** — Overlay a second bee on the right half of any slot using `Ctrl`+click, with its own beequip, mutation, and level; see the full spec below
 
 ---
 
@@ -48,6 +51,33 @@ Custom presets persist across sessions via `localStorage`.
 
 ---
 
+## Partial Slots
+
+Partial slots let you plan two bees on a single hive slot — the original bee occupies the left half and the partial bee occupies the right half.
+
+### Setting a partial slot
+| Action | How |
+|--------|-----|
+| Set partial bee | Hold `Ctrl` and click a bee button |
+| Set partial beequip | Hold `Ctrl` and click a beequip button |
+| Set partial mutation | Hold `Ctrl` and click a mutation button |
+| Set partial level | Hold `Ctrl` + `Arrow` (if slot has a partial bee), or use **Set Partial Level** button |
+| Clear all partial data | `Backspace` (first press), or **Empty Partial Slot** button |
+
+### How it renders
+- Partial bee appears on the **right half** of the slot
+- A thin black line divides the slot from top-right to bottom-left vertex
+- When a partial is present: the **regular beequip** moves to the **bottom-left corner**; the **partial beequip** renders at the **bottom-right corner**
+- Partial level is shown at the **mirrored X position** of the regular level number; hidden when it matches the regular level and mutation
+
+### Backspace behavior
+| Keys | Effect |
+|------|--------|
+| `Backspace` | If any partial data exists: clears partial bee, beequip, mutation, level. Otherwise: clears bee, beequip, and mutation |
+| `Ctrl + Backspace` | Clears regular bee and beequip only (partial data is untouched) |
+
+---
+
 ## Keybinds
 
 ### Menu
@@ -57,20 +87,30 @@ Custom presets persist across sessions via `localStorage`.
 | `I` | Open import hive dialog |
 | `C` | Continue working on saved hive (if one exists) |
 
+### Selection
+| Key | Action |
+|-----|--------|
+| `Click` | Select slot |
+| `Shift + Click` | Add slot to selection |
+| `Shift + Drag` | Drag-select multiple slots |
+| `Ctrl + A` | Select all slots |
+
 ### Hive Builder
 | Key | Action |
 |-----|--------|
+| `↑` / `↓` | Adjust level ±1 on selected slots |
+| `←` / `→` | Adjust level ±5 on selected slots |
+| `Ctrl + Arrow` | Adjust partial level ±1/5 (only if slot has a partial bee) |
+| `Ctrl + Bee/Beequip/Mutation` | Set as partial instead of regular |
+| `Backspace` | Clear partial data first; then clear bee, beequip & mutation |
+| `Ctrl + Backspace` | Clear regular bee & beequip only (keeps partial) |
 | `Ctrl + Z` | Undo last change |
-| `Ctrl + A` | Select all slots |
 | `Ctrl + C` | Copy selected slots |
 | `Ctrl + X` | Cut selected slots |
-| `Ctrl + V` | Paste into selected slot |
-| `Ctrl + I` | Set level on selected slots |
+| `Ctrl + V` | Paste into selected slots |
+| `Ctrl + I` | Set level on selected slots (dialog) |
 | `Ctrl + Q` | Clear hive |
 | `Ctrl + Y` | Toggle level number visibility |
-| `Backspace` | Clear bee, beequip, and mutation from selected slots |
-| `Shift + Click` | Add slot to selection |
-| `Shift + Drag` | Drag-select multiple slots |
 
 ---
 

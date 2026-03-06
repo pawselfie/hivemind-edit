@@ -224,7 +224,11 @@ function setup() {
         slots: [],
         level: [],
         mutation: [],
-        beequip: []
+        beequip: [],
+        partialBee: [],
+        partialBeequip: [],
+        partialLevel: [],
+        partialMutation: []
     };
     hexes = [];
     hexesNormal = [];
@@ -274,10 +278,14 @@ function setup() {
 
     if (_pendingHiveFromURL) {
         hive = _pendingHiveFromURL;
-        hive.slots    = hive.slots    || [];
-        hive.level    = hive.level    || new Array(hive.slots.length).fill(0);
-        hive.mutation = hive.mutation || new Array(hive.slots.length).fill(null);
-        hive.beequip  = hive.beequip  || new Array(hive.slots.length).fill(null);
+        hive.slots        = hive.slots        || [];
+        hive.level        = hive.level        || new Array(hive.slots.length).fill(0);
+        hive.mutation     = hive.mutation     || new Array(hive.slots.length).fill(null);
+        hive.beequip      = hive.beequip      || new Array(hive.slots.length).fill(null);
+        hive.partialBee      = hive.partialBee      || new Array(hive.slots.length).fill(null);
+        hive.partialBeequip  = hive.partialBeequip  || new Array(hive.slots.length).fill(null);
+        hive.partialLevel    = hive.partialLevel    || new Array(hive.slots.length).fill(null);
+        hive.partialMutation = hive.partialMutation || new Array(hive.slots.length).fill(null);
         setMode('app', true);
     }
 
@@ -341,6 +349,8 @@ function setup() {
     select('#btn-FLIP').mouseClicked(changeSlot.bind(null, 0, 'flip'));
     select('#removeBeequip').mouseClicked(changeSlot.bind(null, 0, 'removequip'));
     select('#removeMutation').mouseClicked(changeSlot.bind(null, null, 'removemut'));
+    select('#clearPartial').mouseClicked(changeSlot.bind(null, 0, 'clearpartial'));
+    select('#btn-PLVL').mouseClicked(changeSlot.bind(null, 0, 'partiallevel'));
     select('#clearHive').mouseClicked(clearHive);
     select('#toggleLevels').mouseClicked(toggleHideLevels);
     select('#shareURL').mouseClicked(shareURL);
@@ -348,6 +358,8 @@ function setup() {
     gifted = createCheckbox('gifted (alt)', true)
         .id('giftedSelect')
         .parent(select('#multSeltCon'));
+
+    document.getElementById('keybindsBtn').addEventListener('click', showKeybinds);
 
     initPresetPanel();
 }
@@ -375,7 +387,7 @@ function draw() {
     // app
     if (mode == 'app') {
         select('#headerTitle').html(`&nbsp&nbspDeepsea Hive Builder - ${hive.name}`);
-        drawHive(width / 2 - 140, height-17.5, 30, hive.slots, hive.level, hive.mutation, hive.beequip);
+        drawHive(width / 2 - 140, height-17.5, 30, hive.slots, hive.level, hive.mutation, hive.beequip, hive.partialBee, hive.partialBeequip, hive.partialLevel, hive.partialMutation);
         hexes = hexes.splice(0, hive.slots.length < 25 ? 25 : hive.slots.length);
         if (hive.slots.length >= 50 || selected.length != 0) {
             select('#addSlot').attribute('disabled', '');
@@ -461,6 +473,10 @@ Number.prototype.between = function(a, b, inclusive) {
 
 function loadHive() {
     hive = getItem('hive');
+    hive.partialBee      = hive.partialBee      || new Array(hive.slots.length).fill(null);
+    hive.partialBeequip  = hive.partialBeequip  || new Array(hive.slots.length).fill(null);
+    hive.partialLevel    = hive.partialLevel    || new Array(hive.slots.length).fill(null);
+    hive.partialMutation = hive.partialMutation || new Array(hive.slots.length).fill(null);
     setMode('app', true);
 }
 
@@ -470,7 +486,11 @@ async function newHive() {
         slots: [],
         level: [],
         mutation: [],
-        beequip: []
+        beequip: [],
+        partialBee: [],
+        partialBeequip: [],
+        partialLevel: [],
+        partialMutation: []
     };
     hexes = [];
     hexesNormal = [];
@@ -512,6 +532,10 @@ async function setMode(m, loaded=false) {
                 hive.level = new Array(slotCount).fill(0);
                 hive.mutation = new Array(slotCount).fill(null);
                 hive.beequip = new Array(slotCount).fill(null);
+                hive.partialBee      = new Array(slotCount).fill(null);
+                hive.partialBeequip  = new Array(slotCount).fill(null);
+                hive.partialLevel    = new Array(slotCount).fill(null);
+                hive.partialMutation = new Array(slotCount).fill(null);
             } else {
                 return;
             }
@@ -538,6 +562,10 @@ function addSlot() {
     hive.level.push(0);
     hive.mutation.push(null);
     hive.beequip.push(null);
+    hive.partialBee.push(null);
+    hive.partialBeequip.push(null);
+    hive.partialLevel.push(null);
+    hive.partialMutation.push(null);
 }
 
 function removeSlot() {
@@ -546,6 +574,10 @@ function removeSlot() {
     hive.level.pop();
     hive.mutation.pop();
     hive.beequip.pop();
+    hive.partialBee.pop();
+    hive.partialBeequip.pop();
+    hive.partialLevel.pop();
+    hive.partialMutation.pop();
 }
 
 async function changeName() {
@@ -576,11 +608,15 @@ function saveHive() {
     const match = customs.findIndex(p => p.name === hive.name);
     if (match !== -1) {
         customs[match] = {
-            name:     hive.name,
-            slots:    hive.slots.slice(),
-            level:    hive.level.slice(),
-            mutation: hive.mutation.slice(),
-            beequip:  hive.beequip.slice(),
+            name:            hive.name,
+            slots:           hive.slots.slice(),
+            level:           hive.level.slice(),
+            mutation:        hive.mutation.slice(),
+            beequip:         hive.beequip.slice(),
+            partialBee:      (hive.partialBee      || []).slice(),
+            partialBeequip:  (hive.partialBeequip  || []).slice(),
+            partialLevel:    (hive.partialLevel    || []).slice(),
+            partialMutation: (hive.partialMutation || []).slice(),
         };
         saveCustomPresets(customs);
     }
@@ -635,7 +671,11 @@ function exportText() {
         slots: hive.slots,
         level: hive.level,
         mutation: hive.mutation,
-        beequip:hive.beequip
+        beequip: hive.beequip,
+        partialBee: hive.partialBee,
+        partialBeequip: hive.partialBeequip,
+        partialLevel: hive.partialLevel,
+        partialMutation: hive.partialMutation
     };
     const jsonStr = JSON.stringify(hiveData);
     navigator.clipboard.writeText(jsonStr).then(() => {
@@ -654,6 +694,10 @@ async function importText() {
         hive.level = hiveData.level || [];
         hive.mutation = hiveData.mutation || [];
         hive.beequip = hiveData.beequip || [];
+        hive.partialBee      = hiveData.partialBee      || new Array(hive.slots.length).fill(null);
+        hive.partialBeequip  = hiveData.partialBeequip  || new Array(hive.slots.length).fill(null);
+        hive.partialLevel    = hiveData.partialLevel    || new Array(hive.slots.length).fill(null);
+        hive.partialMutation = hiveData.partialMutation || new Array(hive.slots.length).fill(null);
         setMode('app', true);
     } catch (error) {
         showModal({ message: 'Invalid hive data.', type: 'alert' });
@@ -686,19 +730,40 @@ async function changeSlot(type, category) {
         if (!n || isNaN(n)) return;
         level = clamp(parseInt(n), 1, 25);
     }
+    let partialLevelVal = null;
+    if (category === 'partiallevel') {
+        let n = await showModal({ message: 'What partial level do you want to set the selected hive slots?', type: 'prompt', defaultValue: '20' });
+        if (!n || isNaN(n)) return;
+        partialLevelVal = clamp(parseInt(n), 1, 25);
+    }
+    const isPartial = keyIsDown(CONTROL) && (category === 'bee' || category === 'beequip' || category === 'mutation');
     for (const i of uniqueSelected) {
         if (category === 'bee') {
-            if (!keyIsDown(ALT) && !gifted.checked()) {
-                hive.slots[i] = type;
+            if (isPartial && type !== 'U') {
+                hive.partialBee[i] = (!keyIsDown(ALT) && !gifted.checked()) ? type : type.toLowerCase();
             } else {
-                hive.slots[i] = (type === 'U') ? 'U' : type.toLowerCase();
+                if (!keyIsDown(ALT) && !gifted.checked()) {
+                    hive.slots[i] = type;
+                } else {
+                    hive.slots[i] = (type === 'U') ? 'U' : type.toLowerCase();
+                }
             }
         } else if (category === 'mutation') {
-            hive.mutation[i] = type;
+            if (isPartial) {
+                hive.partialMutation[i] = type;
+            } else {
+                hive.mutation[i] = type;
+            }
         } else if (category === 'beequip') {
-            hive.beequip[i] = type;
+            if (isPartial) {
+                hive.partialBeequip[i] = type;
+            } else {
+                hive.beequip[i] = type;
+            }
         } else if (category === 'level') {
             hive.level[i] = level+0;
+        } else if (category === 'partiallevel') {
+            hive.partialLevel[i] = partialLevelVal;
         } else if (category === 'flip') {
             let cur = hive.slots[i];
             if (hive.slots[i] == 'U') continue;
@@ -707,6 +772,11 @@ async function changeSlot(type, category) {
             hive.beequip[i] = null;
         } else if (category === 'removemut') {
             hive.mutation[i] = null;
+        } else if (category === 'clearpartial') {
+            hive.partialBee[i]      = null;
+            hive.partialBeequip[i]  = null;
+            hive.partialLevel[i]    = null;
+            hive.partialMutation[i] = null;
         }
     }
     selected = [];
@@ -722,9 +792,13 @@ async function clearHive() {
     if (!await showModal({ message: 'Clear all bees, beequips, and mutations from every slot?', type: 'confirm' })) return;
     saveUndoState();
     const n = hive.slots.length;
-    hive.slots = new Array(n).fill('U');
-    hive.mutation = new Array(n).fill(null);
-    hive.beequip = new Array(n).fill(null);
+    hive.slots       = new Array(n).fill('U');
+    hive.mutation    = new Array(n).fill(null);
+    hive.beequip     = new Array(n).fill(null);
+    hive.partialBee      = new Array(n).fill(null);
+    hive.partialBeequip  = new Array(n).fill(null);
+    hive.partialLevel    = new Array(n).fill(null);
+    hive.partialMutation = new Array(n).fill(null);
     selected = [];
     hexes = hexesNormal.slice();
 }
@@ -813,10 +887,14 @@ function copySelection() {
     if (selected.length === 0) return;
     const idx = [...new Set(selected)].sort((a, b) => a - b);
     slotClipboard = {
-        slots:    idx.map(i => hive.slots[i]),
-        level:    idx.map(i => hive.level[i]),
-        mutation: idx.map(i => hive.mutation[i]),
-        beequip:  idx.map(i => hive.beequip[i])
+        slots:           idx.map(i => hive.slots[i]),
+        level:           idx.map(i => hive.level[i]),
+        mutation:        idx.map(i => hive.mutation[i]),
+        beequip:         idx.map(i => hive.beequip[i]),
+        partialBee:      idx.map(i => hive.partialBee[i]),
+        partialBeequip:  idx.map(i => hive.partialBeequip[i]),
+        partialLevel:    idx.map(i => hive.partialLevel[i]),
+        partialMutation: idx.map(i => hive.partialMutation[i])
     };
 }
 
@@ -829,6 +907,10 @@ function cutSelection() {
         hive.level[i] = 0;
         hive.mutation[i] = null;
         hive.beequip[i] = null;
+        hive.partialBee[i]      = null;
+        hive.partialBeequip[i]  = null;
+        hive.partialLevel[i]    = null;
+        hive.partialMutation[i] = null;
     }
     selected = [];
     hexes = hexesNormal.slice();
@@ -841,10 +923,14 @@ function pasteSelection() {
     const len = slotClipboard.slots.length;
     for (let j = 0; j < idx.length; j++) {
         const i = idx[j], s = j % len;
-        hive.slots[i]    = slotClipboard.slots[s];
-        hive.level[i]    = slotClipboard.level[s];
-        hive.mutation[i] = slotClipboard.mutation[s];
-        hive.beequip[i]  = slotClipboard.beequip[s];
+        hive.slots[i]          = slotClipboard.slots[s];
+        hive.level[i]          = slotClipboard.level[s];
+        hive.mutation[i]       = slotClipboard.mutation[s];
+        hive.beequip[i]         = slotClipboard.beequip[s];
+        hive.partialBee[i]      = slotClipboard.partialBee      ? slotClipboard.partialBee[s]      : null;
+        hive.partialBeequip[i]  = slotClipboard.partialBeequip  ? slotClipboard.partialBeequip[s]  : null;
+        hive.partialLevel[i]    = slotClipboard.partialLevel    ? slotClipboard.partialLevel[s]    : null;
+        hive.partialMutation[i] = slotClipboard.partialMutation ? slotClipboard.partialMutation[s] : null;
     }
     selected = [];
     hexes = hexesNormal.slice();
@@ -882,10 +968,14 @@ function initPresetPanel() {
                 }
                 customs.push({
                     name,
-                    slots:    hive.slots.slice(),
-                    level:    hive.level.slice(),
-                    mutation: hive.mutation.slice(),
-                    beequip:  hive.beequip.slice(),
+                    slots:           hive.slots.slice(),
+                    level:           hive.level.slice(),
+                    mutation:        hive.mutation.slice(),
+                    beequip:         hive.beequip.slice(),
+                    partialBee:      (hive.partialBee      || []).slice(),
+                    partialBeequip:  (hive.partialBeequip  || []).slice(),
+                    partialLevel:    (hive.partialLevel    || []).slice(),
+                    partialMutation: (hive.partialMutation || []).slice(),
                 });
                 saveCustomPresets(customs);
                 renderPresets('custom');
@@ -945,11 +1035,15 @@ function initPresetPanel() {
 function loadPreset(preset) {
     saveUndoState();
     hive = {
-        name:     preset.name,
-        slots:    preset.slots.slice(),
-        level:    preset.level.slice(),
-        mutation: preset.mutation.slice(),
-        beequip:  preset.beequip.slice(),
+        name:            preset.name,
+        slots:           preset.slots.slice(),
+        level:           preset.level.slice(),
+        mutation:        preset.mutation.slice(),
+        beequip:         preset.beequip.slice(),
+        partialBee:      preset.partialBee      ? preset.partialBee.slice()      : new Array(preset.slots.length).fill(null),
+        partialBeequip:  preset.partialBeequip  ? preset.partialBeequip.slice()  : new Array(preset.slots.length).fill(null),
+        partialLevel:    preset.partialLevel    ? preset.partialLevel.slice()    : new Array(preset.slots.length).fill(null),
+        partialMutation: preset.partialMutation ? preset.partialMutation.slice() : new Array(preset.slots.length).fill(null),
     };
     selected = [];
     hexes = [];
@@ -971,6 +1065,28 @@ async function shareURL() {
     flashStatusText('copied!');
 }
 
+function showKeybinds() {
+    const overlay = document.getElementById('keybinds-overlay');
+    const okBtn = document.getElementById('keybinds-ok');
+    overlay.classList.add('active');
+
+    function close() {
+        overlay.classList.remove('active');
+        okBtn.removeEventListener('click', close);
+        document.removeEventListener('keydown', onKeydown);
+    }
+
+    function onKeydown(e) {
+        if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') {
+            e.preventDefault();
+            close();
+        }
+    }
+
+    okBtn.addEventListener('click', close);
+    document.addEventListener('keydown', onKeydown);
+}
+
 function keyPressed() {
     if (mode === 'menu') {
         if (document.getElementById('modal-overlay').classList.contains('active')) return;
@@ -980,7 +1096,11 @@ function keyPressed() {
                 slots: new Array(50).fill('U'),
                 level: new Array(50).fill(0),
                 mutation: new Array(50).fill(null),
-                beequip: new Array(50).fill(null)
+                beequip: new Array(50).fill(null),
+                partialBee: new Array(50).fill(null),
+                partialBeequip: new Array(50).fill(null),
+                partialLevel: new Array(50).fill(null),
+                partialMutation: new Array(50).fill(null)
             };
             hexes = [];
             hexesNormal = [];
@@ -1001,13 +1121,50 @@ function keyPressed() {
     if (key === 'Backspace') {
         if (selected.length === 0) return false;
         saveUndoState();
-        for (const i of [...new Set(selected)]) {
-            hive.slots[i] = 'U';
-            hive.beequip[i] = null;
-            hive.mutation[i] = null;
+        const uniqueSel = [...new Set(selected)];
+        if (keyIsDown(CONTROL)) {
+            // Ctrl+Backspace: remove regular bee and beequip only
+            for (const i of uniqueSel) {
+                hive.slots[i] = 'U';
+                hive.beequip[i] = null;
+            }
+        } else {
+            const hasPartial = uniqueSel.some(i => hive.partialBee[i] != null || hive.partialBeequip[i] != null || hive.partialLevel[i] != null || hive.partialMutation[i] != null);
+            if (hasPartial) {
+                // First Backspace: clear all partial data
+                for (const i of uniqueSel) {
+                    hive.partialBee[i]      = null;
+                    hive.partialBeequip[i]  = null;
+                    hive.partialLevel[i]    = null;
+                    hive.partialMutation[i] = null;
+                }
+            } else {
+                // No partial: act as usual
+                for (const i of uniqueSel) {
+                    hive.slots[i] = 'U';
+                    hive.beequip[i] = null;
+                    hive.mutation[i] = null;
+                }
+            }
         }
         selected = [];
         hexes = hexesNormal.slice();
+        return false;
+    }
+    if (keyCode === UP_ARROW || keyCode === DOWN_ARROW || keyCode === LEFT_ARROW || keyCode === RIGHT_ARROW) {
+        if (selected.length === 0) return false;
+        const delta = keyCode === UP_ARROW ? 1 : keyCode === DOWN_ARROW ? -1 : keyCode === LEFT_ARROW ? -5 : 5;
+        saveUndoState();
+        const uniqueSel2 = [...new Set(selected)];
+        for (const i of uniqueSel2) {
+            if (keyIsDown(CONTROL) && hive.partialBee[i] != null) {
+                const cur = hive.partialLevel[i] != null ? hive.partialLevel[i] : (hive.level[i] || 0);
+                const next = clamp(cur + delta, 0, 25);
+                hive.partialLevel[i] = next === 0 ? null : next;
+            } else {
+                hive.level[i] = clamp((hive.level[i] || 0) + delta, 0, 25);
+            }
+        }
         return false;
     }
     if (!keyIsDown(CONTROL)) return;
