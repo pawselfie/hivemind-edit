@@ -139,7 +139,7 @@ function drawHive(x, y, radius, slots, level, mutation, beequip) {
             }
 
             // LEVEL
-            try {
+            if (!hideLevels) try {
                 let lvl = level[i].toString();
                 if (lvl) {
                     let posX = hexes[hexes.length - 1].x - 18;

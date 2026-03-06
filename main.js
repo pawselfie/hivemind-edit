@@ -7,6 +7,7 @@ HTMLCanvasElement.prototype.getContext = function(type, attrs) {
 let mode, cnv, fnt, hive, hiveSaved, hexes, hexesNormal, selected, multSelt, gifted, bee_btns, bqp_btns, mut_btns, dragging=false;
 let undoStack = [];
 let slotClipboard = null;
+let hideLevels = false;
 
 // ── PRESETS ──────────────────────────────────────────────────────────────────
 // Set `data` to the string produced by "Export as string" for each preset.
@@ -331,6 +332,7 @@ function setup() {
     select('#removeBeequip').mouseClicked(changeSlot.bind(null, 0, 'removequip'));
     select('#removeMutation').mouseClicked(changeSlot.bind(null, null, 'removemut'));
     select('#clearHive').mouseClicked(clearHive);
+    select('#toggleLevels').mouseClicked(toggleHideLevels);
     select('#shareURL').mouseClicked(shareURL);
 
     gifted = createCheckbox('gifted (alt)', true)
@@ -687,6 +689,11 @@ async function changeSlot(type, category) {
     hexes = hexesNormal.slice();
 }
 
+function toggleHideLevels() {
+    hideLevels = !hideLevels;
+    document.getElementById('toggleLevels').textContent = hideLevels ? 'Show Levels' : 'Hide Levels';
+}
+
 async function clearHive() {
     if (!await showModal({ message: 'Clear all bees, beequips, and mutations from every slot?', type: 'confirm' })) return;
     saveUndoState();
@@ -969,6 +976,6 @@ function keyPressed() {
     if (k === 'x') { cutSelection(); return false; }
     if (k === 'v') { pasteSelection(); return false; }
     if (k === 'i') { changeSlot(0, 'level'); return false; }
-    if (k === 'q') { clearHive(); return false;
-    }
+    if (k === 'q') { clearHive(); return false; }
+    if (k === 'y') { toggleHideLevels(); return false; }
 }

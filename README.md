@@ -18,6 +18,7 @@ Plan your hive layout visually, assign bees, set levels, apply mutations, equip 
   - Select All Slots
   - Remove Mutation
   - Clear Hive
+  - Hide/Show Levels
 - **Presets** — Load curated hive builds from the menu across Blue, Red, White, RBC, and Alts tabs; save and manage your own builds in the Custom tab
 
 ---
@@ -66,6 +67,7 @@ Custom presets persist across sessions via `localStorage`.
 | `Ctrl + V` | Paste into selected slot |
 | `Ctrl + I` | Set level on selected slots |
 | `Ctrl + Q` | Clear hive |
+| `Ctrl + Y` | Toggle level number visibility |
 | `Backspace` | Clear bee, beequip, and mutation from selected slots |
 | `Shift + Click` | Add slot to selection |
 | `Shift + Drag` | Drag-select multiple slots |
