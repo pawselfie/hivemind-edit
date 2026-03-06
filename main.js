@@ -553,6 +553,7 @@ async function setMode(m, loaded=false) {
         resizeCanvas(472, 563);
         select('#menu').attribute('data-status', 'inactive');
         select('#app').attribute('data-status', 'active');
+        if (typeof updateParticles === 'function') updateParticles(hive);
     }
 }
 
@@ -573,6 +574,7 @@ function addSlot() {
     hive.partialBeequip.push(null);
     hive.partialLevel.push(null);
     hive.partialMutation.push(null);
+    if (typeof updateParticles === 'function') updateParticles(hive);
 }
 
 function removeSlot() {
@@ -585,6 +587,7 @@ function removeSlot() {
     hive.partialBeequip.pop();
     hive.partialLevel.pop();
     hive.partialMutation.pop();
+    if (typeof updateParticles === 'function') updateParticles(hive);
 }
 
 async function changeName() {
@@ -800,6 +803,7 @@ async function changeSlot(type, category) {
     }
     selected = [];
     hexes = hexesNormal.slice();
+    if (typeof updateParticles === 'function') updateParticles(hive);
 }
 
 function toggleHideLevels() {
@@ -820,6 +824,7 @@ async function clearHive() {
     hive.partialMutation = new Array(n).fill(null);
     selected = [];
     hexes = hexesNormal.slice();
+    if (typeof updateParticles === 'function') updateParticles(hive);
 }
 
 function checkWindowSize() {
@@ -902,6 +907,7 @@ function undo() {
     hive = undoStack.pop();
     selected = [];
     hexes = [];
+    if (typeof updateParticles === 'function') updateParticles(hive);
 }
 
 function redo() {
@@ -910,6 +916,7 @@ function redo() {
     hive = redoStack.pop();
     selected = [];
     hexes = [];
+    if (typeof updateParticles === 'function') updateParticles(hive);
 }
 
 
@@ -944,6 +951,7 @@ function cutSelection() {
     }
     selected = [];
     hexes = hexesNormal.slice();
+    if (typeof updateParticles === 'function') updateParticles(hive);
 }
 
 function pasteSelection() {
@@ -964,6 +972,7 @@ function pasteSelection() {
     }
     selected = [];
     hexes = hexesNormal.slice();
+    if (typeof updateParticles === 'function') updateParticles(hive);
 }
 
 function getCustomPresets() {
@@ -1078,6 +1087,7 @@ function loadPreset(preset) {
     selected = [];
     hexes = [];
     hexesNormal = [];
+    if (typeof updateParticles === 'function') updateParticles(hive);
 }
 
 async function shareURL() {
