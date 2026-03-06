@@ -350,6 +350,7 @@ button:not(.minMax):active {
     height: 38px;
     object-fit: contain;
     pointer-events: none;
+    border-radius: 6px;
 }
 
 footer {
