@@ -100,8 +100,6 @@ Rows are sorted by a fixed priority list (Baby Love → Token Link → Melody �
 - **Bee tokens** — every bee type contributes the tokens listed in its stat sheet. If a partial bee is on the same slot and also provides the token, it counts as committed; if only one side provides it, it counts as partial.
 - **Guaranteed beequip tokens** (100% base chance) — always counted as committed sources; no icon appears on the canvas.
 - **Optional beequip tokens** — counted only when you explicitly select them in the token picker that appears when placing the beequip; selected optional tokens also display as small icons on the beequip slot in the canvas.
-- **Beequip transforms** — certain beequips transform a bee's token into a different one (e.g. Reindeer Antlers change Fetch → Reindeer Fetch on the same slot), which is reflected in the count.
-- **Duplicate suppression** — if a beequip ability token normalizes to the same name as the bee's own token in the same slot (e.g. Focus from both the bee and its beequip), it is not double-counted.
 
 ### Beequip token picker
 
@@ -110,8 +108,6 @@ When you place a beequip that has **optional** ability tokens, a picker dialog a
 - **Flat options** — for beequips with one set of optional tokens, every possible subset (or, for exclusive tokens, one-of-N) is shown as a card. Click a card to confirm.
 - **Multi-group options** (e.g. Bang Snap) — groups are shown as separate labeled rows. Select one option per row, then click **Confirm**.
 - Press `Escape` or click **Cancel** to abort the placement.
-
-The selected optional tokens are saved with the hive and included in export, URL sharing, and presets.
 
 ### Export image
 
