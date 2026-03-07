@@ -21,6 +21,7 @@ Plan your hive layout visually, assign bees, set levels, apply mutations, equip 
   - Hide/Show Levels
   - Empty Partial Slot
   - Set Partial Level
+- **Token Sources Panel** — A live slide-out panel on the left edge that lists every ability token your hive produces, how many sources each token has, and whether any are in a partial (transitional) slot; see the full spec below
 - **Presets** — Load curated hive builds from the menu across Blue, Red, White, RBC, and Alts tabs; save and manage your own builds in the Custom tab
 - **Partial Slots** — Overlay a second bee on the right half of any slot using `Ctrl`+click, with its own beequip, mutation, and level; see the full spec below
 
@@ -75,6 +76,46 @@ Partial slots let you plan two bees on a single hive slot — the original bee o
 |------|--------|
 | `Backspace` | If any partial data exists: clears partial bee, beequip, mutation, level. Otherwise: clears bee, beequip, and mutation |
 | `Ctrl + Backspace` | Clears regular bee and beequip only (partial data is untouched) |
+
+---
+
+## Token Sources Panel
+
+The **Token Sources** panel slides out from the left edge of the screen while you're in the hive builder. Click the vertical tab (labeled **Token Sources**) to open or close it.
+
+### What it shows
+
+The panel lists every ability token produced by the bees and beequips in your hive. Each row shows:
+
+| Column | Meaning |
+|--------|---------|
+| **Count** (teal) | Number of committed sources for this token |
+| **Count** (orange, `f/t` format) | `f` committed + some partial sources — the total including partial slots is `t` |
+| **Token name** | Normalized token name (e.g. `Baby Love`, `Red Boost`) |
+
+Rows are sorted by a fixed priority list (Baby Love → Token Link → Melody → Haste → Honey Mark → Red Boost → Blue Boost → …), then by total count descending, then alphabetically.
+
+### Token counting rules
+
+- **Bee tokens** — every bee type contributes the tokens listed in its stat sheet. If a partial bee is on the same slot and also provides the token, it counts as committed; if only one side provides it, it counts as partial.
+- **Guaranteed beequip tokens** (100% base chance) — always counted as committed sources; no icon appears on the canvas.
+- **Optional beequip tokens** — counted only when you explicitly select them in the token picker that appears when placing the beequip; selected optional tokens also display as small icons on the beequip slot in the canvas.
+- **Beequip transforms** — certain beequips transform a bee's token into a different one (e.g. Reindeer Antlers change Fetch → Reindeer Fetch on the same slot), which is reflected in the count.
+- **Duplicate suppression** — if a beequip ability token normalizes to the same name as the bee's own token in the same slot (e.g. Focus from both the bee and its beequip), it is not double-counted.
+
+### Beequip token picker
+
+When you place a beequip that has **optional** ability tokens, a picker dialog appears with cards showing the beequip image and the possible tokens overlaid:
+
+- **Flat options** — for beequips with one set of optional tokens, every possible subset (or, for exclusive tokens, one-of-N) is shown as a card. Click a card to confirm.
+- **Multi-group options** (e.g. Bang Snap) — groups are shown as separate labeled rows. Select one option per row, then click **Confirm**.
+- Press `Escape` or click **Cancel** to abort the placement.
+
+The selected optional tokens are saved with the hive and included in export, URL sharing, and presets.
+
+### Export image
+
+When you export the hive as an image, a **Token Sources** column is appended to the right of the canvas in the same sort order as the panel. Committed counts are shown in teal; partial counts in orange using `f/t` notation.
 
 ---
 

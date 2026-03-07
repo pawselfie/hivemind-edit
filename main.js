@@ -1083,29 +1083,95 @@ function saveHive() {
 
 function exportImage() {
     const beeList = new Map([['U', 'Empty'], ['BA', 'Basic Bee'], ['BO', 'Bomber Bee'], ['BR', 'Brave Bee'], ['BU', 'Bumble Bee'],['CO', 'Cool Bee'], ['HA', 'Hasty Bee'], ['LO', 'Looker Bee'], ['RA', 'Rad Bee'],['RAS', 'Rascal Bee'], ['ST', 'Stubborn Bee'], ['BUB', 'Bubble Bee'], ['BUC', 'Bucko Bee'],['COM', 'Commander Bee'], ['DE', 'Demo Bee'], ['EX', 'Exhausted Bee'], ['FI', 'Fire Bee'],['FR', 'Frosty Bee'], ['HO', 'Honey Bee'], ['RAG', 'Rage Bee'], ['RI', 'Riley Bee'],['SH', 'Shocked Bee'], ['BAB', 'Baby Bee'], ['CA', 'Carpenter Bee'], ['DEM', 'Demon Bee'],['DI', 'Diamond Bee'], ['LI', 'Lion Bee'], ['MU', 'Music Bee'], ['NI', 'Ninja Bee'],['SHY', 'Shy Bee'], ['BUO', 'Buoyant Bee'], ['FU', 'Fuzzy Bee'], ['PR', 'Precise Bee'],['SP', 'Spicy Bee'], ['TA', 'Tadpole Bee'], ['VE', 'Vector Bee'], ['BE', 'Bear Bee'],['COB', 'Cobalt Bee'], ['CR', 'Crimson Bee'], ['FE', 'Festive Bee'], ['GU', 'Gummy Bee'],['PH', 'Photon Bee'], ['PU', 'Puppy Bee'], ['TAB', 'Tabby Bee'], ['VI', 'Vicious Bee'],['WI', 'Windy Bee'], ['DIG', 'Digital Bee']]);
-    let pg = createGraphics(472, 613);
+
+    // Build sorted token sources (same order as the panel)
+    const { full, partial } = computeTokenSources();
+    const allTokens = new Set([...Object.keys(full), ...Object.keys(partial)]);
+    const TOKEN_PRIORITY = [
+        'baby love', 'token link', 'melody', 'haste',
+        'honey mark', 'red boost', 'blue boost', 'white boost', 'inflate balloon',
+    ];
+    const sortedToks = [...allTokens].sort((a, b) => {
+        const pa = TOKEN_PRIORITY.indexOf(a), pb = TOKEN_PRIORITY.indexOf(b);
+        if (pa !== -1 || pb !== -1) {
+            if (pa === -1) return 1; if (pb === -1) return -1; return pa - pb;
+        }
+        const ta = (full[a] || 0) + (partial[a] || 0);
+        const tb = (full[b] || 0) + (partial[b] || 0);
+        return tb - ta || a.localeCompare(b);
+    });
+
+    const tokColW = sortedToks.length > 0 ? 165 : 0;
     const rootStyle = getComputedStyle(document.documentElement);
-    pg.background(rootStyle.getPropertyValue('--bg').trim());
+    const colBg    = rootStyle.getPropertyValue('--bg').trim();
+    const colText  = rootStyle.getPropertyValue('--text').trim();
+    const colAccent = '#287882';
+    const colPartial = '#e5a030';
+
+    let pg = createGraphics(472 + tokColW, 613);
+    pg.background(colBg);
+    pg.textFont(fnt);
+
+    // Hive title (centered over hive area only)
     pg.textSize(30);
     pg.textAlign(CENTER, CENTER);
-    pg.fill(rootStyle.getPropertyValue('--text').trim());
-    pg.textFont(fnt);
-    pg.text(hive.name, pg.width/2, 25);
+    pg.fill(colText);
+    pg.text(hive.name, 236, 25);
+
+    // Hive canvas
+    pg.image(cnv, 0, 50);
+
+    // Bee count overlay (top-left of hive)
     pg.textAlign(LEFT, TOP);
     pg.textSize(10);
-    pg.image(cnv, 0, 50);
+    pg.fill(colText);
     const total = new Map();
-    hive.slots.forEach(i => {
-        const k = i.toUpperCase();
-        total.set(k, (total.get(k) || 0) + 1);
+    hive.slots.forEach(i => { const k = i.toUpperCase(); total.set(k, (total.get(k) || 0) + 1); });
+    let beeOffset = 20;
+    [...total.entries()].sort(([, A], [, B]) => B - A).forEach(([bee, amount]) => {
+        pg.text(`${(beeList.get(bee) || bee)}: ${amount}`, 10, beeOffset);
+        beeOffset += 15;
     });
-    let totalSort = [...total.entries()].sort(([, A], [, B]) => B-A), offset = 20;
-    totalSort.forEach(([bee, amount]) => {
-        const name = beeList.get(bee) || bee;
-        console.log(name);
-        pg.text(`${name}: ${amount}`, 10, offset);
-        offset += 15;
-    });
+
+    // Token sources column
+    if (tokColW > 0) {
+        const cx = 472 + 10;
+        let ty = 50;
+
+        // Header
+        pg.textSize(10);
+        pg.textAlign(LEFT, TOP);
+        pg.fill(colAccent);
+        pg.text('TOKEN SOURCES', cx, ty);
+        ty += 4;
+        pg.stroke(colAccent);
+        pg.strokeWeight(0.5);
+        pg.line(cx, ty + 9, cx + tokColW - 14, ty + 9);
+        pg.noStroke();
+        ty += 14;
+
+        for (const tok of sortedToks) {
+            const f = full[tok] || 0;
+            const p = partial[tok] || 0;
+            const isPartialRow = p > 0;
+            const countStr = isPartialRow ? `${f}/${f + p}` : `${f}`;
+
+            pg.textAlign(RIGHT, TOP);
+            pg.fill(isPartialRow ? colPartial : colAccent);
+            pg.textSize(10);
+            pg.text(countStr, cx + 28, ty);
+
+            pg.textAlign(LEFT, TOP);
+            pg.fill(colText);
+            pg.textSize(10);
+            // Capitalize first letter of each word
+            const label = tok.replace(/\b\w/g, c => c.toUpperCase());
+            pg.text(label, cx + 33, ty);
+
+            ty += 14;
+        }
+    }
+
     let fname = hive.name.replace(/[/\\?%*:|"<>]/g, '-');
     save(pg, `${fname}.png`);
 }
